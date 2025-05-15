@@ -4,10 +4,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef struct node {
+    int ficha;
+    int tempo;
+    str nome[50]; 
+    struct Node *prox; 
+} No;
+
+typedef struct lista {
+    No *primeiro;
+    No *ultimo;
+} Lista;
+
 typedef enum {
     AGUARDAR,
     SIMULAR,
-    TERMINAR
+    TERMINAR,
+    LER,
+    IMPRIMIR
 } statusProcessamento;
 
 typedef struct conf {

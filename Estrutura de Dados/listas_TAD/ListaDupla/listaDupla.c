@@ -42,6 +42,29 @@ No *inserir_inicio(ListaDupla *lista, int dado) {
   return novo;
 }
 
+No *inserir_fim(ListaDupla *lista, int dado){
+  No *novo = (No *) malloc(sizeof(No));
+  if (novo == NULL) {
+    return NULL; // Memory allocation failure
+  }
+  novo->dado = dado;
+  novo->anterior = lista->ultimo;
+  novo->proximo = lista->primeiro;
+
+  if (lista->primeiro == NULL) {
+    lista->ultimo = novo;
+  } else {
+    lista->primeiro->anterior = novo;
+  }
+
+  lista->primeiro = novo;
+  return novo;
+}
+
+No *inserir_posicao(ListaDupla *lista, int dado, int posicao){
+
+}
+
 int remover_inicio(ListaDupla *lista) {
   if (lista->primeiro == NULL) {
     return -1; // Empty list
@@ -60,6 +83,14 @@ int remover_inicio(ListaDupla *lista) {
 
   free(removido);
   return valor_removido;
+}
+
+int remover_fim(ListaDupla *lista, int dado){
+
+}
+
+int remover_posicao(ListaDupla *lista, int posicao){
+
 }
 
 void imprimir_lista(ListaDupla *lista, Direcao dir) {
