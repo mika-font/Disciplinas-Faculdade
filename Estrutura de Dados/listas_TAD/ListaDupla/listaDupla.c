@@ -85,13 +85,13 @@ int remover_inicio(ListaDupla *lista) {
   return valor_removido;
 }
 
-int remover_fim(ListaDupla *lista, int dado){
+/*int remover_fim(ListaDupla *lista, int dado){
 
 }
 
 int remover_posicao(ListaDupla *lista, int posicao){
 
-}
+}*/
 
 void imprimir_lista(ListaDupla *lista, Direcao dir) {
     if (lista->primeiro == NULL) {
