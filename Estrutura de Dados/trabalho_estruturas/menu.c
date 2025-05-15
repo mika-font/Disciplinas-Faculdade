@@ -3,7 +3,7 @@
 #include "tad_configs.h"
 
 int menu() {
-    printf("1. Aguardar\n2. Simular\n3. Terminar\n4. Ler\n0. Sair\n");
+    printf("1. Aguardar\n2. Simular\n3. Terminar\n4. Ler\n5. Nova Ficha\n0. Sair\n");
     printf("Informe a opção desejada: ");
     int aux;
     scanf("%d", &aux);
@@ -40,6 +40,10 @@ int main() {
               // Exibir configurações (carrega do arquivo existente se existir)
               configs_mostrar(tad_configs);
               break;
+          }
+          case 5: { // Cria uma ficha e adiciona na fila.
+            //função para criar uma ficha
+            //função para adicionar a ficha na lista
           }
           case 0: {
               configs_destruir(tad_configs);

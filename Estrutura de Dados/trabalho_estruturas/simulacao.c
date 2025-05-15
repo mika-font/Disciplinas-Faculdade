@@ -35,4 +35,16 @@ int main() {
 No menu, o usuário cria uma nova ficha, um tempo (de preferência
 aleatório) é associado a esta ficha. Depois, adicionar a mesma na fila.
 Na TV, conforme o tempo passa, os itens são removidos da fila e
-apresentados na tela. Quando terminar o tempo, chama o próximo.*/
+apresentados na tela. Quando terminar o tempo, chama o próximo.
+
+typedef struct Node {
+    int ficha;           // Número da ficha
+    int tempo;           // Tempo de atendimento
+    struct Node* prox;   // Ponteiro para o próximo nó
+} Node;
+
+// Estrutura da fila
+typedef struct {
+    Node* ini;  // Início da fila
+    Node* fim;  // Fim da fila
+} Fila;*/
