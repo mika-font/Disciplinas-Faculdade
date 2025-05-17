@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "vetordinamico.h"
+#include "vetordinamico.h" // Inclui o protótipo das funções
 
 int main() {
     // Criar um vetor dinâmico com capacidade inicial de 5 elementos
@@ -22,6 +22,9 @@ int main() {
     // Imprimir o vetor após a remoção
     printf("Vetor após remover o elemento na posição 2:\n");
     imprimir_vetor(vetor);
+
+    printf("Busca do elemento no vetor:\n");
+    buscar_elemento(vetor, 40);
 
     // Liberar a memória alocada para o vetor
     liberar_vetor(vetor);
