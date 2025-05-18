@@ -4,24 +4,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct node {
+typedef struct no {
     int ficha;
     int tempo;
-    str nome[50]; 
-    struct Node *prox; 
-} No;
+    char nome[50];
+    char medico[50];
+    struct no *prox; 
+} Ficha;
 
 typedef struct lista {
-    No *primeiro;
-    No *ultimo;
+    Ficha *primeiro;
+    Ficha *ultimo;
 } Lista;
 
 typedef enum {
-    AGUARDAR,
-    SIMULAR,
-    TERMINAR,
-    LER,
-    IMPRIMIR
+    AGUARDAR,       //Aguarda comandos
+    SIMULAR,        //
+    TERMINAR,       //Finaliza a simulação
+    GERAR_FICHA,    //Gera uma nova ficha
+    LER,            //
+    IMPRIMIR,       //Imprime as fichas e suas informações
 } statusProcessamento;
 
 typedef struct conf {
@@ -35,7 +37,7 @@ typedef struct tad_configs {
 } TadConfigs;
 
 typedef enum {
-    NENHUMa,
+    NENHUMA,
     BAIXA,
     MEDIA,
     ALTA
@@ -56,5 +58,10 @@ void configs_salvar(TadConfigs *tad);
 void configs_ler(TadConfigs *tad);
 void configs_mostrar(TadConfigs *tad);
 void configs_atualizar(TadConfigs *tad, statusProcessamento status, int intervalo);
+Lista *criar_lista();
+Ficha *inserir_ficha(Lista *lista, int dado, int intervalo);
+void retirar_ficha(Lista *lista);
+void destruir_lista(Lista *lista);
+void imprimir_lista(Lista *lista);
 
 #endif

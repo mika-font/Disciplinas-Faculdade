@@ -3,7 +3,8 @@
 #include <unistd.h>
 #include "tad_configs.h"
 
-#define CONFIGS_FILE "../configuracoes.dat"
+#define CONFIGS_FILE "./configuracoes.dat"
+#define CONFIGS_FILA "./fila.txt"
 
 TadConfigs *configs_inicializar() {//const char *nome_arquivo
     TadConfigs *tad = malloc(sizeof(TadConfigs));
@@ -16,7 +17,6 @@ TadConfigs *configs_inicializar() {//const char *nome_arquivo
         configs_ler(tad);
         configs_fechar(arquivo);
     } else {
-        free(tad); //Editei agora
         return NULL;
     }
     return tad;
@@ -76,8 +76,3 @@ void configs_atualizar(TadConfigs *tad, statusProcessamento status, int interval
       configs_salvar(tad);
   }
 }
-
-//função para criar a lista
-//função para destruir a lista
-//função para inserir_fim ficha na lista
-//função para remover_inicio ficha na lista
