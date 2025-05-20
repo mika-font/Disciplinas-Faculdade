@@ -11,7 +11,6 @@ int menu() {
 }
 
 int main() {
-    srand(time(NULL));
     TadConfigs *tad_configs;
     int op;
     // Criar TAD e abrir arquivo
@@ -21,6 +20,7 @@ int main() {
         return 1;
     }
     Lista *fila = criar_lista();
+    Ficha *ficha;
     int num = 1;
     do {
         op = menu();
@@ -47,6 +47,17 @@ int main() {
             case 5: { 
                 inserir_ficha_lista(fila, num);
                 num++;
+                /*ler_arquivo();
+                if(arquivo != NULL){
+                    num = 12+1;
+                } else {}
+                ficha = inserir_ficha_lista(fila, num);
+                escrever_arquivo(ficha);*/
+                break;
+            }
+            case 6: { 
+                imprimir_lista(fila);
+                break;
             }
             case 0: {
                 configs_destruir(tad_configs);

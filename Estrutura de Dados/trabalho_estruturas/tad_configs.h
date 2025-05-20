@@ -18,11 +18,11 @@ typedef struct lista {
 } Lista;
 
 typedef enum {
-    AGUARDAR,       //Aguarda comandos
-    SIMULAR,        //
+    AGUARDAR,       //Aguarda comandos do menu
+    SIMULAR,        //Funciona o atendimento
     TERMINAR,       //Finaliza a simulação
     GERAR_FICHA,    //Gera uma nova ficha
-    LER,            //
+    LER,            //Lê o arquivo e executa as fichas
     IMPRIMIR,       //Imprime as fichas e suas informações
 } statusProcessamento;
 
@@ -66,11 +66,10 @@ void destruir_lista(Lista *lista);
 void imprimir_lista(Lista *lista);
 void imprimir_ficha(Ficha *ficha);
 int intervalo();
-char preencher_nome(char nome[], int tamanho);
-char preencher_medico(char medico[], int tamanho);
+void *preencher_nome(char nome[], int tamanho);
+void *preencher_medico(char medico[], int tamanho);
 
-void escrever_arquivo();
+void escrever_arquivo(Ficha *ficha);
 void ler_arquivo();
-void fechar_arquivo();
 
 #endif

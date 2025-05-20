@@ -11,19 +11,21 @@ int intervalo(){
 }
 
 // Preenche o campo nome da ficha.
-char preencher_nome(char nome[], int tamanho){
+void *preencher_nome(char nome[], int tamanho){
+  int c;
+  while ((c = getchar()) != '\n' && c != EOF);
   printf("Digite seu nome: ");
   fgets(nome, tamanho, stdin);
   nome[strcspn(nome, "\n")] = '\0';
-  return nome;
 }
 
 // Preenche o campo médico da ficha.
-char preencher_medico(char medico[], int tamanho){
+void *preencher_medico(char medico[], int tamanho){
+  //int c;
+  //while ((c = getchar()) != '\n' && c != EOF);
   printf("Digite o médico: ");
   fgets(medico, tamanho, stdin);
   medico[strcspn(medico, "\n")] = '\0';
-  return medico;
 }
 
 // Cria uma lista.
@@ -69,7 +71,7 @@ void imprimir_ficha(Ficha *ficha){
 // Retira a ficha da lista, chama a função de imprimir ficha e libera a memória.
 void retirar_ficha_lista(Lista *lista){
   if (lista->primeiro == NULL) {
-    return -1;
+    return;
   } else {
     Ficha *seguinte = lista->primeiro;
     if (lista->primeiro == lista->ultimo) {
@@ -114,7 +116,8 @@ void destruir_lista(Lista *lista) {
 }
 
 //Finalizar depois
-/*void escrever_arquivo(Ficha *ficha){
+/*
+void escrever_arquivo(Ficha *ficha){
   FILE * arquivo;
   arquivo = fopen("./fichas.txt", "a");
   if (arquivo == NULL) {
@@ -127,9 +130,13 @@ void destruir_lista(Lista *lista) {
 }
 
 void ler_arquivo(){
-  
+  FILE * arquivo;
+  arquivo = fopen("./fichas.txt", "a");
+  if (arquivo == NULL) {
+    perror("Erro ao abrir o arquivo.");
+    return -1;
+  }
+  //descobrir como ler e tratar os dados salvos no arquivo
+  fclose(arquivo);
 }
-
-void fechar_arquivo(){
-  
-}*/
+*/
