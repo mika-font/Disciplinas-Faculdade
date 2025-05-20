@@ -58,10 +58,19 @@ void configs_salvar(TadConfigs *tad);
 void configs_ler(TadConfigs *tad);
 void configs_mostrar(TadConfigs *tad);
 void configs_atualizar(TadConfigs *tad, statusProcessamento status, int intervalo);
+
 Lista *criar_lista();
-Ficha *inserir_ficha(Lista *lista, int dado, int intervalo);
-void retirar_ficha(Lista *lista);
+Ficha *inserir_ficha_lista(Lista *lista, int num);
+void retirar_ficha_lista(Lista *lista);
 void destruir_lista(Lista *lista);
 void imprimir_lista(Lista *lista);
+void imprimir_ficha(Ficha *ficha);
+int intervalo();
+char preencher_nome(char nome[], int tamanho);
+char preencher_medico(char medico[], int tamanho);
+
+void escrever_arquivo();
+void ler_arquivo();
+void fechar_arquivo();
 
 #endif

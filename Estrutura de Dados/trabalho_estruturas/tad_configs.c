@@ -23,7 +23,7 @@ TadConfigs *configs_inicializar() {//const char *nome_arquivo
 }
 FILE *configs_abrir() {
     FILE *arquivo;
-    if( access(CONFIGS_FILE, F_OK ) != -1 ) { // arquivo já existe
+    if(access(CONFIGS_FILE, F_OK ) != -1 ) { // arquivo já existe
         arquivo = fopen(CONFIGS_FILE, "rb+"); // apenas abre o arquivo
     } else {
         arquivo = fopen(CONFIGS_FILE, "wb+"); // cria arquivo novo
