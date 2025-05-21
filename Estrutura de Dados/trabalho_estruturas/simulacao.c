@@ -2,27 +2,37 @@
 #include <unistd.h>
 #include "tad_configs.h"
 
-void simular(int tempo) {
+void simular(Ficha *ficha) {
     printf("Simulando...\n");
-    sleep(tempo);
+    sleep(ficha->tempo);
 }
 
 int main() {
+    // Inicializa o TAD do Configs e o arquivo de comunicação.
     TadConfigs *tad_configs;
-    // Criar TAD e abrir arquivo
     tad_configs = configs_inicializar();
     if (!tad_configs) {
       printf("Erro ao criar TAD\n");
       return 1;
     }
     printf("Arquivo acessado!");
+
     // Carregar configurações
     configs_ler(tad_configs);
     configs_mostrar(tad_configs);
+
     while(tad_configs->configs.status != TERMINAR) {
         sleep(tad_configs->configs.intervalo);
         if(tad_configs->configs.status == SIMULAR) {
-            simular(2);
+            // Ler a ficha do arquivo de armazenamento e simular
+            Ficha *ficha = ler_arquivo(tad_configs, 0);
+            if (ficha != NULL) {
+                configs_atualizar(tad_configs, SIMULAR, tad_configs->configs.intervalo, 1);
+                simular(ficha);
+                free(ficha);
+            } else {
+                printf("Nenhuma ficha para simular.\n");
+            }
         } else {
             printf("Aguardando...\n");
         }

@@ -11,48 +11,55 @@ int menu() {
 }
 
 int main() {
+    // Inicializa o TAD do Configs e o arquivo de comunicação.
     TadConfigs *tad_configs;
     int op;
-    // Criar TAD e abrir arquivo
     tad_configs = configs_inicializar();
     if (!tad_configs) {
         printf("Erro ao criar TAD\n");
         return 1;
     }
+    // Incializa a lista de fichas.
     Lista *fila = criar_lista();
     Ficha *ficha;
     int num = 1;
+    int posicao = 1;
     do {
+        configs_ler(tad_configs);
+        if(tad_configs->configs.apagar == 1) {
+            retirar_ficha_lista(fila);
+            configs_atualizar(tad_configs, tad_configs->configs.status, tad_configs->configs.intervalo, 0);
+            configs_salvar(tad_configs);
+        }
         op = menu();
         switch(op) {
-            case 1: { // Faz a fila aguardar.
-                configs_atualizar(tad_configs, AGUARDAR, 1);
+            case 1: { // Faz a simulação aguardar.
+                configs_atualizar(tad_configs, AGUARDAR, 1, 0);
                 break;
             }
-            case 2: { // Faz a fila avançar.
-                configs_atualizar(tad_configs, SIMULAR, 1);
+            case 2: { // Faz a simulação rodar.
+                configs_atualizar(tad_configs, SIMULAR, 1, 0);
                 break;
             }
-            case 3: {
-                configs_atualizar(tad_configs, TERMINAR, 1);
+            case 3: { // Faz a simulação terminar.
+                configs_atualizar(tad_configs, TERMINAR, 1, 0);
                 break;
             }
-            case 4: {
-                // Carregar configurações
+            case 4: { // Faz a leitura do arquivo de comunicação.
                 configs_ler(tad_configs);
-                // Exibir configurações (carrega do arquivo existente se existir)
                 configs_mostrar(tad_configs);
                 break;
             }
-            case 5: { 
-                inserir_ficha_lista(fila, num);
-                num++;
-                /*ler_arquivo();
-                if(arquivo != NULL){
-                    num = 12+1;
-                } else {}
+            case 5: { // Inserer uma nova ficha na lista.
+                ficha = ler_arquivo(tad_configs, posicao);
+                if(ficha != NULL){
+                    num = ficha->ficha + 1;
+                    free(ficha);
+                }
                 ficha = inserir_ficha_lista(fila, num);
-                escrever_arquivo(ficha);*/
+                escrever_arquivo(ficha);
+                free(ficha);
+                num++;
                 break;
             }
             case 6: { 

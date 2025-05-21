@@ -29,6 +29,7 @@ typedef enum {
 typedef struct conf {
     statusProcessamento status;
     int intervalo;
+    int apagar;
 } Configs;
 
 typedef struct tad_configs {
@@ -57,7 +58,7 @@ void configs_destruir(TadConfigs *tad);
 void configs_salvar(TadConfigs *tad);
 void configs_ler(TadConfigs *tad);
 void configs_mostrar(TadConfigs *tad);
-void configs_atualizar(TadConfigs *tad, statusProcessamento status, int intervalo);
+void configs_atualizar(TadConfigs *tad, statusProcessamento status, int intervalo, int apagar);
 
 Lista *criar_lista();
 Ficha *inserir_ficha_lista(Lista *lista, int num);
@@ -69,7 +70,9 @@ int intervalo();
 void *preencher_nome(char nome[], int tamanho);
 void *preencher_medico(char medico[], int tamanho);
 
+FILE *abrir_arquivo();
 void escrever_arquivo(Ficha *ficha);
-void ler_arquivo();
+Ficha *ler_arquivo(TadConfigs *tad, int posicao);
+void reescrever_arquivo();
 
 #endif

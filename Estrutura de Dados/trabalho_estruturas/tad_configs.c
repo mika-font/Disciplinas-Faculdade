@@ -4,7 +4,6 @@
 #include "tad_configs.h"
 
 #define CONFIGS_FILE "./configuracoes.dat" //Arquivo de comunicação entre os prompts
-#define FILA_FICHAS  "./fila.txt"          //Arquivo de armazenamento de fila
 
 TadConfigs *configs_inicializar() {//const char *nome_arquivo
     TadConfigs *tad = malloc(sizeof(TadConfigs));
@@ -30,6 +29,7 @@ FILE *configs_abrir() {
         TadConfigs *tad = malloc(sizeof(TadConfigs));
         tad->configs.status = AGUARDAR;       // Inicializa o TAD com dados padrão
         tad->configs.intervalo = 1;           // Atualização de tela
+        tad->configs.apagar = 0;              // Não apaga a ficha
         if(tad && arquivo) {                  // Se existe ambos, ele irá escrever o tad no arquivo
           fwrite(&tad->configs, sizeof(Configs), 1, arquivo);
         }
@@ -69,10 +69,11 @@ void configs_mostrar(TadConfigs *tad) {
       printf(" - Intervalo: %d segundo\n\n", tad->configs.intervalo);
   }
 }
-void configs_atualizar(TadConfigs *tad, statusProcessamento status, int intervalo) {
+void configs_atualizar(TadConfigs *tad, statusProcessamento status, int intervalo, int apagar) {
   if(tad) { //Atualiza o arquivo de comunicação
     tad->configs.status = status;
     tad->configs.intervalo = intervalo;
+    tad->configs.apagar = apagar;
     configs_salvar(tad);
   }
 }

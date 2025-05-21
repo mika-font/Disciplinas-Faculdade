@@ -5,6 +5,8 @@
 #include <time.h>
 #include "tad_configs.h"
 
+#define FILA_FICHAS  "./fila.dat"          //Arquivo de armazenamento de fila
+
 // Gera um tempo de atendimento aleatório.
 int intervalo(){
   return rand() % (10 - 5 + 1) + 5;
@@ -115,28 +117,68 @@ void destruir_lista(Lista *lista) {
   lista->ultimo = NULL;
 }
 
-//Finalizar depois
-/*
-void escrever_arquivo(Ficha *ficha){
-  FILE * arquivo;
-  arquivo = fopen("./fichas.txt", "a");
-  if (arquivo == NULL) {
-    perror("Erro ao abrir o arquivo.");
-    return -1;
-  }
-  fprintf(arquivo, "Ficha: %d | Nome: %s | Médico: %s | Tempo: %d\n", ficha->ficha, ficha->nome, ficha->medico, ficha->tempo);
-
-  fclose(arquivo);
+FILE *abrir_arquivo() {
+    FILE *arquivo;
+    if(access(FILA_FICHAS, F_OK ) != -1 ) {  // Arquivo já existe
+      arquivo = fopen(FILA_FICHAS, "rb+"); // Apenas abre o arquivo
+    } else {                                 // Arquivo não existe
+      arquivo = fopen(FILA_FICHAS, "wb+"); // Cria arquivo novo
+    }
+    return arquivo;
 }
 
-void ler_arquivo(){
-  FILE * arquivo;
-  arquivo = fopen("./fichas.txt", "a");
-  if (arquivo == NULL) {
-    perror("Erro ao abrir o arquivo.");
-    return -1;
-  }
-  //descobrir como ler e tratar os dados salvos no arquivo
-  fclose(arquivo);
+// Escreve a ficha no arquivo
+void escrever_arquivo(Ficha *ficha) {
+    FILE *arquivo = abrir_arquivo();
+    if (ficha && arquivo) {
+      fseek(arquivo, 0, SEEK_END);  // Garante que a escrita comece no final do arquivo
+      fwrite(ficha, sizeof(Ficha), 1, arquivo);
+      fclose(arquivo);
+    }
 }
-*/
+
+// Lê o arquivo e retira a ficha do arquivo.
+Ficha *ler_arquivo(TadConfigs *tad, int posicao) {
+    FILE *arquivo = abrir_arquivo();
+    Ficha *ficha = (Ficha *) malloc(sizeof(Ficha));
+    if (arquivo && ficha) {
+      // O é inicio e 1 é o fim do arquivo.
+        if(posicao == 1) {
+          fseek(arquivo, 0, SEEK_END);
+          long tamanho = ftell(arquivo);
+
+          if (tamanho < sizeof(Ficha)) {
+              printf("Arquivo vazio ou corrompido.\n");
+              fclose(arquivo);
+              return NULL;
+          }
+          fseek(arquivo, -sizeof(Ficha), SEEK_END);
+          fread(ficha, sizeof(Ficha), 1, arquivo);
+        } else {
+          rewind(arquivo);  // Garante que a leitura comece do início do arquivo
+          fread(ficha, sizeof(Ficha), 1, arquivo);
+          fclose(arquivo);
+        }
+    }
+    return ficha;
+}
+
+// Reescreve o arquivo sem a ficha retirada.
+void reescrever_arquivo() {
+    FILE *arquivo = abrir_arquivo();
+    if (arquivo) {
+      fseek(arquivo, 0, SEEK_END);
+      long tamanho = ftell(arquivo);
+      int total = tamanho / sizeof(Ficha);
+      rewind(arquivo);
+
+      Ficha *fichas = malloc(tamanho);
+      fread(fichas, sizeof(Ficha), total, arquivo);
+      fclose(arquivo);
+
+      arquivo = fopen(FILA_FICHAS, "wb");
+      fwrite(fichas + 1, sizeof(Ficha), total - 1, arquivo);
+      fclose(arquivo);
+      free(fichas);
+    }
+}
