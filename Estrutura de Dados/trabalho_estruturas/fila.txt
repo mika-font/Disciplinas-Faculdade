@@ -1,0 +1,3 @@
+Número: 1 | Tempo: 6 | Paciente: Mikael | Médico: Daniel
+Número: 1 | Tempo: 6 | Paciente: Gabriel | Médico: Samuel
+Número: 1174357086 | Tempo: 9 | Paciente: Evandro | Médico: Carlos

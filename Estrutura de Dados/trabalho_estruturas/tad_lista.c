@@ -5,7 +5,7 @@
 #include <time.h>
 #include "tad_configs.h"
 
-#define FILA_FICHAS  "./fila.dat"          //Arquivo de armazenamento de fila
+#define FILA_FICHAS  "./fila.txt"          //Arquivo de armazenamento de fila
 
 // Gera um tempo de atendimento aleatório.
 int intervalo(){
@@ -67,7 +67,7 @@ Ficha *inserir_ficha_lista(Lista *lista, int num){
 
 // Imprime a ficha.
 void imprimir_ficha(Ficha *ficha){
-  printf("Número: %d\n Paciente: %s\n Médico: %s\n", ficha->ficha, ficha->nome, ficha->medico);
+  printf("Número: %d | Paciente: %s\n Médico: %s\n", ficha->ficha, ficha->nome, ficha->medico);
 }
 
 // Retira a ficha da lista, chama a função de imprimir ficha e libera a memória.
@@ -120,9 +120,9 @@ void destruir_lista(Lista *lista) {
 FILE *abrir_arquivo() {
     FILE *arquivo;
     if(access(FILA_FICHAS, F_OK ) != -1 ) {  // Arquivo já existe
-      arquivo = fopen(FILA_FICHAS, "rb+"); // Apenas abre o arquivo
+      arquivo = fopen(FILA_FICHAS, "r+");   // Apenas abre o arquivo
     } else {                                 // Arquivo não existe
-      arquivo = fopen(FILA_FICHAS, "wb+"); // Cria arquivo novo
+      arquivo = fopen(FILA_FICHAS, "w+");   // Cria arquivo novo
     }
     return arquivo;
 }
@@ -131,54 +131,54 @@ FILE *abrir_arquivo() {
 void escrever_arquivo(Ficha *ficha) {
     FILE *arquivo = abrir_arquivo();
     if (ficha && arquivo) {
-      fseek(arquivo, 0, SEEK_END);  // Garante que a escrita comece no final do arquivo
-      fwrite(ficha, sizeof(Ficha), 1, arquivo);
+      fseek(arquivo, 0, SEEK_END);
+      fprintf(arquivo, "Número: %d | Tempo: %d | Paciente: %s | Médico: %s\n", ficha->ficha, ficha->tempo, ficha->nome, ficha->medico);
       fclose(arquivo);
     }
 }
 
 // Lê o arquivo e retira a ficha do arquivo.
-Ficha *ler_arquivo(TadConfigs *tad, int posicao) {
+Ficha *ler_arquivo(TadConfigs *tad, int leitura) {
     FILE *arquivo = abrir_arquivo();
     Ficha *ficha = (Ficha *) malloc(sizeof(Ficha));
     if (arquivo && ficha) {
-      // O é inicio e 1 é o fim do arquivo.
-        if(posicao == 1) {
-          fseek(arquivo, 0, SEEK_END);
-          long tamanho = ftell(arquivo);
-
-          if (tamanho < sizeof(Ficha)) {
-              printf("Arquivo vazio ou corrompido.\n");
-              fclose(arquivo);
-              return NULL;
-          }
-          fseek(arquivo, -sizeof(Ficha), SEEK_END);
-          fread(ficha, sizeof(Ficha), 1, arquivo);
-        } else {
-          rewind(arquivo);  // Garante que a leitura comece do início do arquivo
-          fread(ficha, sizeof(Ficha), 1, arquivo);
-          fclose(arquivo);
-        }
+      if(leitura == 0){
+        rewind(arquivo);
+      } else {
+        fseek(arquivo, 0, SEEK_END);
+      }
+      fscanf(arquivo, "Número: %d | Tempo: %d", &ficha->ficha, &ficha->tempo);
+      fgets(ficha->nome, sizeof(ficha->nome), arquivo);
+      ficha->nome[strcspn(ficha->nome, "\n")] = '\0';
+      fgets(ficha->medico, sizeof(ficha->medico), arquivo);
+      ficha->medico[strcspn(ficha->medico, "\n")] = '\0';
+      fclose(arquivo);
     }
     return ficha;
 }
 
-// Reescreve o arquivo sem a ficha retirada.
+// Reescreve o arquivo sem a ficha.
 void reescrever_arquivo() {
     FILE *arquivo = abrir_arquivo();
+    FILE *temporario = fopen("temp.txt", "w");
+    if (!temporario) {
+        perror("Erro ao criar arquivo temporário");
+        fclose(arquivo);
+        return;
+    }
     if (arquivo) {
-      fseek(arquivo, 0, SEEK_END);
-      long tamanho = ftell(arquivo);
-      int total = tamanho / sizeof(Ficha);
-      rewind(arquivo);
-
-      Ficha *fichas = malloc(tamanho);
-      fread(fichas, sizeof(Ficha), total, arquivo);
+      char linha[200];
+      int linha_atual = 0;
+      while (fgets(linha, sizeof(linha), arquivo)) {
+        if (linha_atual > 0) {
+          fputs(linha, temporario);
+        }
+        linha_atual++;
+      }
       fclose(arquivo);
+      fclose(temporario);
 
-      arquivo = fopen(FILA_FICHAS, "wb");
-      fwrite(fichas + 1, sizeof(Ficha), total - 1, arquivo);
-      fclose(arquivo);
-      free(fichas);
+      remove(FILA_FICHAS);
+      rename("temp.txt", FILA_FICHAS);
     }
 }

@@ -23,13 +23,13 @@ int main() {
     Lista *fila = criar_lista();
     Ficha *ficha;
     int num = 1;
-    int posicao = 1;
+    int leitura = 1; // 1 para ler a última ficha, 0 para ler a primeira ficha.
+    int ponto = 0;
     do {
         configs_ler(tad_configs);
         if(tad_configs->configs.apagar == 1) {
             retirar_ficha_lista(fila);
             configs_atualizar(tad_configs, tad_configs->configs.status, tad_configs->configs.intervalo, 0);
-            configs_salvar(tad_configs);
         }
         op = menu();
         switch(op) {
@@ -51,15 +51,23 @@ int main() {
                 break;
             }
             case 5: { // Inserer uma nova ficha na lista.
-                ficha = ler_arquivo(tad_configs, posicao);
+                if(tad_configs->configs.status == SIMULAR) {
+                    configs_atualizar(tad_configs, AGUARDAR, 1, 0);
+                    ponto = 1;
+                } else {
+                    ponto = 0;
+                }
+                ficha = ler_arquivo(tad_configs, leitura);
                 if(ficha != NULL){
                     num = ficha->ficha + 1;
-                    free(ficha);
                 }
                 ficha = inserir_ficha_lista(fila, num);
                 escrever_arquivo(ficha);
                 free(ficha);
-                num++;
+                if(ponto == 1) {
+                    configs_atualizar(tad_configs, SIMULAR, 1, 0);
+                    ponto = 0;
+                }
                 break;
             }
             case 6: { 
@@ -67,6 +75,7 @@ int main() {
                 break;
             }
             case 0: {
+                configs_atualizar(tad_configs, AGUARDAR, 1, 0);
                 configs_destruir(tad_configs);
                 destruir_lista(fila);
                 printf("Até a próxima!\n");
@@ -74,6 +83,7 @@ int main() {
             }
             default: {
                 printf("Opção inválida!\n");
+                break;
             }
         }
     } while (op != 0);

@@ -4,6 +4,8 @@
 
 void simular(Ficha *ficha) {
     printf("Simulando...\n");
+    reescrever_arquivo();
+    printf("Número: %d | Tempo: %d | Paciente: %s | Médico: %s\n", ficha->ficha, ficha->tempo, ficha->nome, ficha->medico);
     sleep(ficha->tempo);
 }
 
