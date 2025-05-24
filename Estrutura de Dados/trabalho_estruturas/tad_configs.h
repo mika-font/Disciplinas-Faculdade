@@ -29,7 +29,6 @@ typedef enum {
 typedef struct conf {
     statusProcessamento status;
     int intervalo;
-    int apagar;
 } Configs;
 
 typedef struct tad_configs {
@@ -58,7 +57,7 @@ void configs_destruir(TadConfigs *tad);
 void configs_salvar(TadConfigs *tad);
 void configs_ler(TadConfigs *tad);
 void configs_mostrar(TadConfigs *tad);
-void configs_atualizar(TadConfigs *tad, statusProcessamento status, int intervalo, int apagar);
+void configs_atualizar(TadConfigs *tad, statusProcessamento status, int intervalo);
 
 Lista *criar_lista();
 Ficha *inserir_ficha_lista(Lista *lista, int num);

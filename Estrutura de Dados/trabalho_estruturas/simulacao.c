@@ -19,6 +19,13 @@ int main() {
     }
     printf("Arquivo acessado!");
 
+    // Inicializa a lista de fichas.
+    Lista *fila = criar_lista();
+    Ficha *ficha;
+    int num = 1;
+    int leitura = 1; // 1 para ler a última ficha, 0 para ler a primeira ficha.
+    int ponto = 0;
+
     // Carregar configurações
     configs_ler(tad_configs);
     configs_mostrar(tad_configs);
@@ -29,7 +36,7 @@ int main() {
             // Ler a ficha do arquivo de armazenamento e simular
             Ficha *ficha = ler_arquivo(tad_configs, 0);
             if (ficha != NULL) {
-                configs_atualizar(tad_configs, SIMULAR, tad_configs->configs.intervalo, 1);
+                configs_atualizar(tad_configs, SIMULAR, tad_configs->configs.intervalo);
                 simular(ficha);
                 free(ficha);
             } else {
@@ -40,6 +47,18 @@ int main() {
         }
         configs_ler(tad_configs);
     }
+
+                    /*ficha = ler_arquivo(tad_configs, leitura);
+                if(ficha != NULL){
+                    num = ficha->ficha + 1;
+                }
+                ficha = inserir_ficha_lista(fila, num);
+                escrever_arquivo(ficha);
+                free(ficha);
+                if(ponto == 1) {
+                    configs_atualizar(tad_configs, SIMULAR, 1, 0);
+                    ponto = 0;
+                }*/
 
     return 0;
 }
