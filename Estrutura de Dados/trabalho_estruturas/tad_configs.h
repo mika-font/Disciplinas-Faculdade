@@ -64,6 +64,7 @@ Ficha *inserir_ficha_lista(Lista *lista, int num);
 void retirar_ficha_lista(Lista *lista);
 void destruir_lista(Lista *lista);
 void imprimir_lista(Lista *lista);
+void recuperar_lista(Lista *lista);
 void imprimir_ficha(Ficha *ficha);
 int intervalo();
 void *preencher_nome(char nome[], int tamanho);
@@ -71,7 +72,7 @@ void *preencher_medico(char medico[], int tamanho);
 
 FILE *abrir_arquivo();
 void escrever_arquivo(Ficha *ficha);
-Ficha *ler_arquivo(TadConfigs *tad, int posicao);
+Ficha *ler_arquivo(TadConfigs *tad, int leitura);
 void reescrever_arquivo();
 
 #endif

@@ -16,18 +16,44 @@ int intervalo(){
 void *preencher_nome(char nome[], int tamanho){
   int c;
   while ((c = getchar()) != '\n' && c != EOF);
-  printf("Digite seu nome: ");
+  printf("Digite o nome do paciente: ");
   fgets(nome, tamanho, stdin);
   nome[strcspn(nome, "\n")] = '\0';
 }
 
 // Preenche o campo médico da ficha.
 void *preencher_medico(char medico[], int tamanho){
-  //int c;
-  //while ((c = getchar()) != '\n' && c != EOF);
-  printf("Digite o médico: ");
-  fgets(medico, tamanho, stdin);
-  medico[strcspn(medico, "\n")] = '\0';
+  printf("1 - Cardiologista\n2 - Dermatologista\n3 - Neurologista\n4 - Pediatra\n5 - Ortopedista\n");
+  printf("Informe a especialidade que deseja consultar: ");
+  int aux;
+  scanf("%d", &aux);
+  switch(aux) {
+    case 1: {
+      strncpy(medico, "Cardiologista", tamanho);
+      break;
+    }
+    case 2: {
+      strncpy(medico, "Dermatologista", tamanho);
+      break;
+    }
+    case 3: {
+      strncpy(medico, "Neurologista", tamanho);
+      break;
+    }
+    case 4: {
+      strncpy(medico, "Pediatra", tamanho);
+      break;
+    }
+    case 5: {
+      strncpy(medico, "Ortopedista", tamanho);
+      break;
+    }
+    default: {
+      printf("Especialidade inválida. Médico não definido.\n");
+      strcpy(medico, "Não definido");
+      break;
+    }
+  }
 }
 
 // Cria uma lista.
@@ -67,7 +93,8 @@ Ficha *inserir_ficha_lista(Lista *lista, int num){
 
 // Imprime a ficha.
 void imprimir_ficha(Ficha *ficha){
-  printf("Número: %d | Paciente: %s\n Médico: %s\n", ficha->ficha, ficha->nome, ficha->medico);
+  printf("Número: %d | Paciente: %s | Especialista: %s", ficha->ficha, ficha->nome, ficha->medico);
+  printf("\n");
 }
 
 // Retira a ficha da lista, chama a função de imprimir ficha e libera a memória.
@@ -82,7 +109,6 @@ void retirar_ficha_lista(Lista *lista){
     } else {
       lista->primeiro = lista->primeiro->prox;
     }
-    imprimir_ficha(seguinte);
     free(seguinte);
   }
 }
@@ -95,7 +121,8 @@ void imprimir_lista(Lista *lista) {
   }
   Ficha *atual = lista->primeiro;
   while (atual != NULL) {
-    printf("n°: %d - %d s\n", atual->ficha, atual->tempo);
+    printf("Número: %d | Tempo: %d | Paciente: %s | Especialista: %s", atual->ficha, atual->tempo, atual->nome, atual->medico);
+    printf("\n");
     atual = atual->prox;
   }
   printf("\n");
@@ -140,45 +167,89 @@ void escrever_arquivo(Ficha *ficha) {
 // Lê o arquivo e retira a ficha do arquivo.
 Ficha *ler_arquivo(TadConfigs *tad, int leitura) {
     FILE *arquivo = abrir_arquivo();
+    if (!arquivo) return NULL;
+
+    char linha[200];
     Ficha *ficha = (Ficha *) malloc(sizeof(Ficha));
-    if (arquivo && ficha) {
-      if(leitura == 0){
-        rewind(arquivo);
-      } else {
-        fseek(arquivo, 0, SEEK_END);
-      }
-      fscanf(arquivo, "Número: %d | Tempo: %d", &ficha->ficha, &ficha->tempo);
-      fgets(ficha->nome, sizeof(ficha->nome), arquivo);
-      ficha->nome[strcspn(ficha->nome, "\n")] = '\0';
-      fgets(ficha->medico, sizeof(ficha->medico), arquivo);
-      ficha->medico[strcspn(ficha->medico, "\n")] = '\0';
-      fclose(arquivo);
+    if (!ficha) {
+        printf("Erro de alocação de memória.\n");
+        fclose(arquivo);
+        return NULL;
     }
+
+    if (fgets(linha, sizeof(linha), arquivo)) {
+        int lidos = sscanf(linha, "Número: %d | Tempo: %d | Paciente: %[^|]| Especialista: %[^\n]", &ficha->ficha, &ficha->tempo, ficha->nome, ficha->medico);
+
+        if (lidos == 4) {
+            ficha->nome[strcspn(ficha->nome, "\n")] = '\0';
+            ficha->medico[strcspn(ficha->medico, "\n")] = '\0';
+            ficha->prox = NULL;
+        } else {
+            printf("Erro ao ler os dados da ficha.\n");
+            free(ficha);
+            ficha = NULL;
+        }
+    } else {
+        free(ficha);
+        ficha = NULL;
+    }
+
+    fclose(arquivo);
     return ficha;
 }
 
 // Reescreve o arquivo sem a ficha.
 void reescrever_arquivo() {
     FILE *arquivo = abrir_arquivo();
+    if (!arquivo) {
+        perror("Erro ao abrir o arquivo de fichas");
+        return;
+    }
+
     FILE *temporario = fopen("temp.txt", "w");
     if (!temporario) {
         perror("Erro ao criar arquivo temporário");
         fclose(arquivo);
         return;
     }
-    if (arquivo) {
-      char linha[200];
-      int linha_atual = 0;
-      while (fgets(linha, sizeof(linha), arquivo)) {
-        if (linha_atual > 0) {
-          fputs(linha, temporario);
-        }
-        linha_atual++;
-      }
-      fclose(arquivo);
-      fclose(temporario);
 
-      remove(FILA_FICHAS);
-      rename("temp.txt", FILA_FICHAS);
+    char linha[200];
+    int linha_atual = 0;
+    while (fgets(linha, sizeof(linha), arquivo)) {
+      if (linha_atual > 0) {
+        fputs(linha, temporario);
+      }
+      linha_atual++;
     }
+    fclose(arquivo);
+    fclose(temporario);
+
+    remove(FILA_FICHAS);
+    rename("temp.txt", FILA_FICHAS);
+}
+
+void recuperar_lista(Lista *lista) {
+    FILE *arquivo = abrir_arquivo();
+    if(!arquivo) return;
+
+    char linha[200];
+    while (fgets(linha, sizeof(linha), arquivo)) {
+      Ficha *ficha = (Ficha *) malloc(sizeof(Ficha));
+      if (sscanf(linha, "Número: %d | Tempo: %d | Paciente: %[^|]| Especialista: %[^\n]", &ficha->ficha, &ficha->tempo, ficha->nome, ficha->medico) == 4) {
+
+        ficha->nome[strcspn(ficha->nome, "\n")] = '\0';
+        ficha->medico[strcspn(ficha->medico, "\n")] = '\0';
+        ficha->prox = NULL;
+        if (lista->primeiro == NULL) {
+            lista->primeiro = ficha;
+            lista->ultimo = ficha;
+        } else {
+            lista->ultimo->prox = ficha;
+            lista->ultimo = ficha;
+        }
+      } else {
+          free(ficha);  // Se falhar o sscanf, libera a ficha
+      }
+    }
+    fclose(arquivo);
 }
