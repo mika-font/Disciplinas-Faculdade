@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<string.h>
 
+// Busca bin√°ria em uma tabela de alunos
 typedef struct tabela{
     int matricula;
     char nome[30];
@@ -9,6 +10,7 @@ typedef struct tabela{
     float media;
 }universidade;
 
+// Fun√ß√£o para inserir dados na tabela de alunos de forma linear e est√°tica
 void  insere (universidade aluno[]) {
     aluno[0].matricula = 1001; strcpy(aluno[0].nome, "Maria"); aluno[0].nota1 = 7.1; aluno[0].nota2 = 6.9; aluno[0].media = (aluno[0].nota1 + aluno[0].nota2)/2;
     aluno[1].matricula = 1010; strcpy(aluno[1].nome, "Joao"); aluno[1].nota1 = 2; aluno[1].nota2 = 6.5; aluno[1].media = (aluno[1].nota1 + aluno[1].nota2)/2;
@@ -19,6 +21,7 @@ void  insere (universidade aluno[]) {
     aluno[6].matricula = 4571; strcpy(aluno[6].nome, "Carlos"); aluno[6].nota1 = 8.9; aluno[6].nota2 = 6.1; aluno[6].media = (aluno[6].nota1 + aluno[6].nota2)/2;
 }
 
+// Fun√ß√£o para imprimir todos os dados da tabela de alunos de forma linear
 void  imprimeTodos (universidade aluno[10]) {
     int i;
     for (i=0; i<7; i++) {
@@ -32,22 +35,22 @@ void  imprimeTodos (universidade aluno[10]) {
     }
 }
 
-int buscaBinaria(universidade aluno[], int mat, int fim) {  // variável fim armazena o último registro da tabela
-    int inicio = 0; // primeiro registro da tabela
-    int meio; // armazena o registro do meio da tabela ou subtabela
+int buscaBinaria(universidade aluno[], int mat, int fim) {  // variÔøΩvel fim armazena o ÔøΩltimo registro da tabela
+    int inicio = 0;                                         // primeiro registro da tabela
+    int meio;                                               // armazena o registro do meio da tabela ou subtabela
     while (inicio <= fim) {
-        meio = (inicio+fim)/2; //descobre o registro do centro da tabela
-        printf ("Posição: %d\n", meio);
+        meio = (inicio+fim)/2;                              //descobre o registro do centro da tabela
+        printf ("PosiÔøΩÔøΩo: %d\n", meio);
         printf("Compara argumento %d com matricula %d\n", mat, aluno[meio].matricula);
-        if (mat == aluno[meio].matricula) {
-            return meio; //retorna a posição do registro na tabela
+         if (mat == aluno[meio].matricula) {
+            return meio; //retorna a posiÔøΩÔøΩo do registro na tabela
     	} else if (mat > aluno[meio].matricula) {
             inicio = meio+1; 
     	} else {
             fim = meio-1;
     	}
     }
-    return -1; //caso não esteja na tabela
+    return -1; //caso nÔøΩo esteja na tabela
 }
 
 int main() {

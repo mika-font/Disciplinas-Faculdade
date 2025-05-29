@@ -31,12 +31,51 @@ ABB* criarABB() {
 
 // Função para inserir um nó na árvore
 void inserir(ABB* abb, int chave) {
-
+    if(abb == NULL){;
+        abb->raiz = criarNo(chave);
+        return;
+    }
+    No* atual = abb->raiz;
+    No* pai = NULL;
+    
+    while (atual != NULL) {
+        pai = atual;
+        if (chave < atual->chave) {
+            atual = atual->esquerdo; // Ir para a subárvore esquerda
+        } else if (chave > atual->chave) {
+            atual = atual->direito; // Ir para a subárvore direita
+        } else {
+            return; // Chave já existe, não inserir duplicado
+        }
+    }
+    if(chave < pai->chave) {
+        pai->esquerdo = criarNo(chave); // Inserir como filho esquerdo
+    } else {
+        pai->direito = criarNo(chave); // Inserir como filho direito
+    }
 }
 
 // Função para buscar um nó na árvore
 No* buscar(No* raiz, int chave) {
+    No* atual = raiz;
+    while (atual != NULL) {
+        if (chave == atual->chave) {
+            return atual; // Nó encontrado
+        } else if (chave < atual->chave) {
+            atual = atual->esquerdo; // Buscar na subárvore esquerda
+        } else {
+            atual = atual->direito; // Buscar na subárvore direita
+        }
+    }
+    return NULL; // Nó não encontrado
 
+    /*if (raiz == NULL || raiz->chave == chave) return raiz;
+    if (chave < raiz->chave) {
+        return buscar(raiz->esquerdo, chave);
+    } else {
+        return buscar(raiz->direito, chave);
+    }
+    return NULL;*/
 }
 
 // Função para encontrar o nó mínimo (mais à esquerda) na BST
