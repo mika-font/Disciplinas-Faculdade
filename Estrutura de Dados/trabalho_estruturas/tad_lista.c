@@ -7,6 +7,39 @@
 
 #define FILA_FICHAS  "./fila.txt"          //Arquivo de armazenamento de fila
 
+void *selecionar_prioridade(int prioridade) {
+  int aux;
+  printf("1 - Gestante\n2 - Idoso\n3 - Pessoa com necessidades especiais\n4 - Criança de colo\n5 - Doença crônica\n6 - Demais pacientes\n"); 
+  printf("Informe a prioridade do paciente: ");
+  scanf("%d", &aux);
+  switch(aux) {
+    case 1: {
+      prioridade = 1; // Gestante
+      break;
+    }
+    case 2: {
+      prioridade = 2; // Idoso
+      break;
+    }
+    case 3: {
+      prioridade = 3; // Pessoa com necessidades especiais
+      break;
+    }
+    case 4: {
+      prioridade = 4; // Criança de colo
+      break;
+    }
+    case 5: {
+      prioridade = 5; // Doença crônica
+      break;
+    }
+    default: {
+      prioridade = 6; // Demais pacientes
+      break;
+    }
+  }
+}
+
 // Gera um tempo de atendimento aleatório.
 int intervalo(){
   return rand() % (10 - 5 + 1) + 5;
@@ -15,7 +48,7 @@ int intervalo(){
 // Preenche o campo nome da ficha.
 void *preencher_nome(char nome[], int tamanho){
   int c;
-  while ((c = getchar()) != '\n' && c != EOF);
+  while ((c = getchar()) != '\n' && c != EOF); // Limpa o buffer de entrada
   printf("Digite o nome do paciente: ");
   fgets(nome, tamanho, stdin);
   nome[strcspn(nome, "\n")] = '\0';

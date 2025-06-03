@@ -31,10 +31,10 @@ ABB* criarABB() {
 
 // Função para inserir um nó na árvore
 void inserir(ABB* abb, int chave) {
-    if(abb == NULL){;
+    if(abb->raiz == NULL){
         abb->raiz = criarNo(chave);
         return;
-    }
+    } 
     No* atual = abb->raiz;
     No* pai = NULL;
     
@@ -48,10 +48,13 @@ void inserir(ABB* abb, int chave) {
             return; // Chave já existe, não inserir duplicado
         }
     }
+
+    No* novoNo = criarNo(chave);
+    novoNo->pai = pai; // Definir o pai do novo nó
     if(chave < pai->chave) {
-        pai->esquerdo = criarNo(chave); // Inserir como filho esquerdo
+        pai->esquerdo = novoNo; // Inserir como filho esquerdo
     } else {
-        pai->direito = criarNo(chave); // Inserir como filho direito
+        pai->direito = novoNo; // Inserir como filho direito
     }
 }
 
@@ -68,24 +71,24 @@ No* buscar(No* raiz, int chave) {
         }
     }
     return NULL; // Nó não encontrado
-
-    /*if (raiz == NULL || raiz->chave == chave) return raiz;
-    if (chave < raiz->chave) {
-        return buscar(raiz->esquerdo, chave);
-    } else {
-        return buscar(raiz->direito, chave);
-    }
-    return NULL;*/
 }
 
 // Função para encontrar o nó mínimo (mais à esquerda) na BST
 No* minimo(No* node) {
-    
+    No* atual = node;
+    while (atual && atual->esquerdo != NULL) {
+        atual = atual->esquerdo; // Descer para o filho esquerdo
+    }
+    return atual; // Retorna o nó mínimo encontrado
 }
 
 // Função para encontrar o nó máximo (mais à direita) na BST
 No* maximo(No* node) {
-
+    No* atual = node;
+    while (atual && atual->direito != NULL) {
+        atual = atual->direito; // Descer para o filho direito
+    }
+    return atual; // Retorna o nó máximo encontrado
 }
 
 // Função para encontrar o sucessor de um nó na BST

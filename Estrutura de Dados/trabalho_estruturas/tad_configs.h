@@ -9,6 +9,7 @@ typedef struct no {
     int tempo;
     char nome[50];
     char medico[50];
+    int prioridade;
     struct no *prox; 
 } Ficha;
 
@@ -43,6 +44,17 @@ typedef enum {
     ALTA
 } PrioridadeItem;
 
+typedef struct No {
+    int chave;
+    struct No* esquerdo;
+    struct No* direito;
+    struct No* pai;
+} No;
+
+typedef struct {
+    No* raiz;
+} ABB;
+
 typedef struct item {
     int id;
     int tempo_processamento;
@@ -59,6 +71,7 @@ void configs_ler(TadConfigs *tad);
 void configs_mostrar(TadConfigs *tad);
 void configs_atualizar(TadConfigs *tad, statusProcessamento status, int intervalo);
 
+// Parte 1 - Lista de Fichas
 Lista *criar_lista();
 Ficha *inserir_ficha_lista(Lista *lista, int num);
 void retirar_ficha_lista(Lista *lista);
@@ -66,13 +79,27 @@ void destruir_lista(Lista *lista);
 void imprimir_lista(Lista *lista);
 void recuperar_lista(Lista *lista);
 void imprimir_ficha(Ficha *ficha);
-int intervalo();
 void *preencher_nome(char nome[], int tamanho);
 void *preencher_medico(char medico[], int tamanho);
+int intervalo();
 
+// Parte 1 - Arquivo de Fichas
 FILE *abrir_arquivo();
-void escrever_arquivo(Ficha *ficha);
 Ficha *ler_arquivo(TadConfigs *tad, int leitura);
+void escrever_arquivo(Ficha *ficha);
 void reescrever_arquivo();
+
+// Parte 2 - Arvore de Prioridade
+ABB *criar_abb();
+No *criar_no(int chave);
+No *buscar(No *raiz, int chave);
+No *sucessor(No *atual);
+No *minimo(No *atual);
+No *maximo(No *atual);
+void *selecionar_prioridade(int prioridade);
+void inserirNo(ABB *abb, int chave);
+void removerNo(ABB *abb, int chave);
+
+
 
 #endif
