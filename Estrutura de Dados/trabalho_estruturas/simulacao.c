@@ -36,6 +36,7 @@ int main() {
     while(tad_configs->configs.status != TERMINAR) {
         sleep(tad_configs->configs.intervalo);
         if(tad_configs->configs.status == GERAR_FICHA){
+            printf("Gerando nova ficha...\n");
             num++;
             Ficha *ficha = inserir_ficha_lista(fila, num);
             escrever_arquivo(ficha);

@@ -18,6 +18,8 @@ typedef struct lista {
     Ficha *ultimo;
 } Lista;
 
+// Lista de fichas é separada do arquivo de fichas para facilitar a manipulação
+
 typedef enum {
     AGUARDAR,       //Aguarda comandos do menu
     SIMULAR,        //Funciona o atendimento
@@ -37,13 +39,6 @@ typedef struct tad_configs {
   Configs configs;
 } TadConfigs;
 
-typedef enum {
-    NENHUMA,
-    BAIXA,
-    MEDIA,
-    ALTA
-} PrioridadeItem;
-
 typedef struct No {
     int chave;
     struct No* esquerdo;
@@ -55,12 +50,6 @@ typedef struct {
     No* raiz;
 } ABB;
 
-typedef struct item {
-    int id;
-    int tempo_processamento;
-    PrioridadeItem prioridade;
-    int finalizado;
-} Item;
 
 FILE *configs_abrir();
 TadConfigs *configs_inicializar();
