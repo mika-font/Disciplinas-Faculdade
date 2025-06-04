@@ -18,7 +18,17 @@ typedef struct lista {
     Ficha *ultimo;
 } Lista;
 
-// Lista de fichas é separada do arquivo de fichas para facilitar a manipulação
+typedef struct No_ar {
+    int chave;
+    struct No_ar* esquerdo;
+    struct No_ar* direito;
+    struct No_ar* pai;
+    Lista *lista_fichas;
+} No;
+
+typedef struct {
+    No* raiz;
+} ABB;
 
 typedef enum {
     AGUARDAR,       //Aguarda comandos do menu
@@ -39,18 +49,6 @@ typedef struct tad_configs {
   Configs configs;
 } TadConfigs;
 
-typedef struct No {
-    int chave;
-    struct No* esquerdo;
-    struct No* direito;
-    struct No* pai;
-} No;
-
-typedef struct {
-    No* raiz;
-} ABB;
-
-
 FILE *configs_abrir();
 TadConfigs *configs_inicializar();
 void configs_fechar(FILE *arquivo);
@@ -68,13 +66,16 @@ void destruir_lista(Lista *lista);
 void imprimir_lista(Lista *lista);
 void recuperar_lista(Lista *lista);
 void imprimir_ficha(Ficha *ficha);
+
+void gerar_ficha_menu(Ficha *ficha);
 void *preencher_nome(char nome[], int tamanho);
 void *preencher_medico(char medico[], int tamanho);
+void *selecionar_prioridade(int prioridade);
 int intervalo();
 
 // Parte 1 - Arquivo de Fichas
 FILE *abrir_arquivo();
-Ficha *ler_arquivo(TadConfigs *tad, int leitura);
+Ficha *ler_arquivo(TadConfigs *tad);
 void escrever_arquivo(Ficha *ficha);
 void reescrever_arquivo();
 
@@ -85,10 +86,8 @@ No *buscar(No *raiz, int chave);
 No *sucessor(No *atual);
 No *minimo(No *atual);
 No *maximo(No *atual);
-void *selecionar_prioridade(int prioridade);
-void inserirNo(ABB *abb, int chave);
-void removerNo(ABB *abb, int chave);
-
-
+void inserir_no_na_arvore(ABB *abb, int chave);
+void remover_no_na_arvore(ABB *abb, int chave);
+void alocar_no_na_arvore(ABB *abb, Ficha *ficha);
 
 #endif

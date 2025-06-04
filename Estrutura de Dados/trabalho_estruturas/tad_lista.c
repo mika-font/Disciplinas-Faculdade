@@ -123,6 +123,14 @@ Ficha *inserir_ficha_lista(Lista *lista, int num){
   return ficha;
 }
 
+void gerar_ficha_menu(Ficha *ficha) {
+  ficha->ficha = NULL;
+  ficha->tempo = intervalo();
+  preencher_nome(ficha->nome, 50);
+  preencher_medico(ficha->medico, 50);
+  selecionar_prioridade(ficha->prioridade);
+}
+
 // Imprime a ficha retirada da lista e do arquivo.
 void imprimir_ficha(Ficha *ficha){
   printf("Número: %d | Paciente: %s | Médico: %s", ficha->ficha, ficha->nome, ficha->medico);
@@ -198,7 +206,7 @@ void escrever_arquivo(Ficha *ficha) {
 }
 
 // Lê o arquivo e retira a ficha do arquivo.
-Ficha *ler_arquivo(TadConfigs *tad, int leitura) {
+Ficha *ler_arquivo(TadConfigs *tad) {
     FILE *arquivo = abrir_arquivo();
     if (!arquivo) return NULL;
 
@@ -228,6 +236,58 @@ Ficha *ler_arquivo(TadConfigs *tad, int leitura) {
     fclose(arquivo);
     return ficha;
 }
+
+/*Ficha *ler_ultima_ficha(const char *nome_arquivo) {
+    FILE *arquivo = abrir_arquivo();
+    if (!arquivo) return NULL;
+
+    fseek(arquivo, 0, SEEK_END);
+    long tamanho = ftell(arquivo);
+
+    if (tamanho == 0) {
+        fclose(arquivo);
+        return NULL;
+    }
+
+    long pos = tamanho - 1;
+    int encontrou_quebra = 0;
+    char c;
+
+    // Volta até encontrar a última quebra de linha
+    while (pos > 0) {
+        fseek(arquivo, pos, SEEK_SET);
+        fread(&c, 1, 1, arquivo);
+        if (c == '\n') {
+            encontrou_quebra = 1;
+            break;
+        }
+        pos--;
+    }
+
+    long inicio = encontrou_quebra ? pos + 1 : 0;
+    fseek(arquivo, inicio, SEEK_SET);
+
+    char linha[200];
+    if (!fgets(linha, sizeof(linha), arquivo)) {
+        fclose(arquivo);
+        return NULL;
+    }
+    fclose(arquivo);
+
+    // Aloca e preenche a ficha
+    Ficha *ficha = malloc(sizeof(Ficha));
+    if (!ficha) return NULL;
+
+    // Ajuste este sscanf conforme o formato real da sua linha
+    if (sscanf(linha, "Número: %d | Tempo: %d | Paciente: %[^|]| Especialista: %[^\n]",
+               &ficha->ficha, &ficha->tempo, ficha->nome, ficha->medico) != 4) {
+        free(ficha);
+        return NULL;
+    }
+
+    ficha->prox = NULL;
+    return ficha;
+}*/
 
 // Reescreve o arquivo sem a ficha retirada.
 void reescrever_arquivo() {

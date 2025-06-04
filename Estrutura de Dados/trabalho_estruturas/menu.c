@@ -39,22 +39,35 @@ int main() {
                 configs_mostrar(tad_configs);
                 break;
             }
-            case 5: { // Inserer uma nova ficha na lista.
+            case 5: { // Inserer uma nova ficha no arquivo.
                 if(tad_configs->configs.status == SIMULAR) {
-                    configs_atualizar(tad_configs, GERAR_FICHA, 1); 
-                    sleep(2);
-                    configs_atualizar(tad_configs, SIMULAR, 1); 
+                    configs_atualizar(tad_configs, AGUARDAR, 1); // Simulação aguarda a nova ficha ser gerada.
+                    Ficha *ficha;
+                    gerar_ficha_menu(ficha);
+                    printf("Nova ficha gerada!\n");
+                    escrever_arquivo(ficha);
+                    sleep(1);
+                    configs_atualizar(tad_configs, GERAR_FICHA, 1); // Realiza as etapas de alocar a ficha no sistema.
+                    printf("Ficha alocada no sistema!\n");
+                    sleep(1);
+                    configs_atualizar(tad_configs, SIMULAR, 1); // Retorna a simular.
                 } else {
-                    configs_atualizar(tad_configs, GERAR_FICHA, 1);
-                    sleep(2);
-                    configs_atualizar(tad_configs, AGUARDAR, 1); 
+                    Ficha *ficha;
+                    gerar_ficha_menu(ficha);
+                    printf("Nova ficha gerada!\n");
+                    escrever_arquivo(ficha);
+                    sleep(1);
+                    configs_atualizar(tad_configs, GERAR_FICHA, 1); // Realiza as etapas de alocar a ficha no sistema.
+                    printf("Ficha alocada no sistema!\n");
+                    sleep(1);
+                    configs_atualizar(tad_configs, AGUARDAR, 1);
                 }
                 break;
             }
-            case 6: { 
+            case 6: { // Imprimir lista de fichas.
                 if(tad_configs->configs.status == SIMULAR) {
                     configs_atualizar(tad_configs, IMPRIMIR, 1); 
-                    sleep(2);
+                    sleep(1);
                     configs_atualizar(tad_configs, SIMULAR, 1); 
                 } else {
                     configs_atualizar(tad_configs, IMPRIMIR, 1);
