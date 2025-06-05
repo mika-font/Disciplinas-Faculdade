@@ -28,14 +28,17 @@ void inserir_no_na_arvore(ABB* abb, int chave) {
             printf("Erro ao alocar nó raiz.\n");
             return;
         }
+
         abb->raiz->lista_fichas = criar_lista();
         if (abb->raiz->lista_fichas == NULL) {
             printf("Erro ao criar lista de fichas para o nó raiz.\n");
             free(abb->raiz);
             abb->raiz = NULL;
         }
+
         return;
     } 
+    
     No* atual = abb->raiz;
     No* pai = NULL;
     

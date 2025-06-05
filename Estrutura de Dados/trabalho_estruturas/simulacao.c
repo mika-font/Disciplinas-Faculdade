@@ -42,8 +42,9 @@ int main() {
 
     while(tad_configs->configs.status != TERMINAR) {
         sleep(tad_configs->configs.intervalo);
+        int comando = ler_log();
 
-        if(tad_configs->configs.status == GERAR_FICHA){
+        if(comando == 1){
             Ficha* ficha_nova;
             ficha_nova = ler_arquivo(tad_configs); // Lê o arquivo e busca a ficha
 
@@ -59,7 +60,22 @@ int main() {
                 printf("Nova ficha gerada!\n");
             }
 
-        } else if (tad_configs->configs.status == SIMULAR) {
+        } else if (comando == 2) {
+            printf("Imprimindo lista de fichas:\n");
+            for(int i = 1; i <= 5; i++){
+                No *priori = buscar(arv_prioridades->raiz, i);
+                if (priori != NULL && priori->lista_fichas != NULL && priori->lista_fichas->primeiro != NULL) {
+                    printf("Prioridade %d:\n", i);
+                    imprimir_lista(priori->lista_fichas);
+                } else {
+                    printf("Prioridade %d: Lista vazia.\n", i);
+                }
+            }
+            printf("Fichas sem prioridade:\n");
+            imprimir_lista(fila_sprior);
+        } 
+
+        if (tad_configs->configs.status == SIMULAR) {
             int p = 1;
             No *priori = NULL;
             while(p <= 5){
@@ -88,24 +104,16 @@ int main() {
                     removerNo(arv_prioridades, priori);
                 }
             }
-        } else if (tad_configs->configs.status == IMPRIMIR) {
-            printf("Imprimindo lista de fichas:\n");
-            for(int i = 1; i <= 5; i++){
-                No *priori = buscar(arv_prioridades->raiz, i);
-                if (priori != NULL && priori->lista_fichas != NULL && priori->lista_fichas->primeiro != NULL) {
-                    printf("Prioridade %d:\n", i);
-                    imprimir_lista(priori->lista_fichas);
-                } else {
-                    printf("Prioridade %d: Nenhuma ficha.\n", i);
-                }
-            }
-            printf("Fichas sem prioridade:\n");
-            imprimir_lista(fila_sprior);
-        } else {
+
+        } 
+
+        if (tad_configs->configs.status == AGUARDAR) {
             printf("Aguardando...\n");
         }
+
         configs_ler(tad_configs);
     }
+    
     destruir_arvore(arv_prioridades);
     destruir_lista(fila_sprior);
     return 0;

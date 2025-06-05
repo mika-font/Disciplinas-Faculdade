@@ -243,29 +243,3 @@ void reescrever_arquivo() {
     remove(FILA_FICHAS);
     rename("temp.txt", FILA_FICHAS);
 }
-
-// Recupera a lista de fichas do arquivo e a armazena na memória do programa. - desuso
-void recuperar_lista(Lista *lista) {
-    FILE *arquivo = abrir_arquivo();
-    if(!arquivo) return;
-
-    char linha[200];
-    while (fgets(linha, sizeof(linha), arquivo)) {
-      Ficha *ficha = (Ficha *) malloc(sizeof(Ficha));
-      if (sscanf(linha, "Número: %d | Tempo: %d | Paciente: %[^|]| Médico: %[^\n]", &ficha->ficha, &ficha->tempo, ficha->nome, ficha->medico) == 4) {
-        ficha->nome[strcspn(ficha->nome, "\n")] = '\0';
-        ficha->medico[strcspn(ficha->medico, "\n")] = '\0';
-        ficha->prox = NULL;
-        if (lista->primeiro == NULL) {
-            lista->primeiro = ficha;
-            lista->ultimo = ficha;
-        } else {
-            lista->ultimo->prox = ficha;
-            lista->ultimo = ficha;
-        }
-      } else {
-          free(ficha);  // Se falhar o sscanf, libera a ficha
-      }
-    }
-    fclose(arquivo);
-}

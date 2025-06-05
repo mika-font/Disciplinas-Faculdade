@@ -71,7 +71,6 @@ No *maximo(No *atual);
 void retirar_ficha_lista(Lista *lista);
 void destruir_lista(Lista *lista);
 void imprimir_lista(Lista *lista);
-void recuperar_lista(Lista *lista);
 void imprimir_ficha(Ficha *ficha);
 void gerar_ficha_menu(Ficha *ficha, int num);
 void *preencher_nome(char nome[], int tamanho);
@@ -88,5 +87,10 @@ void fluxo_fila_arvore(ABB *abb, Ficha *ficha);
 void destruir_no(No *no);
 void destruir_arvore(ABB *abb);
 int intervalo();
+
+FILE *abrir_log();
+int ler_log();
+void escrever_log(int comando);
+void reescrever_log(); 
 
 #endif

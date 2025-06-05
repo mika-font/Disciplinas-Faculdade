@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include "tad_configs.h"
 
 #define CONFIGS_FILE "./configuracoes.dat" //Arquivo de comunicação entre os prompts
+#define COMANDOS_LOG "./comandos.log" //Arquivo de log dos comandos
 
 TadConfigs *configs_inicializar() {//const char *nome_arquivo
     TadConfigs *tad = malloc(sizeof(TadConfigs));
@@ -74,4 +76,77 @@ void configs_atualizar(TadConfigs *tad, statusProcessamento status, int interval
     tad->configs.intervalo = intervalo;
     configs_salvar(tad);
   }
+}
+
+FILE *abrir_log(){
+    FILE *log;
+    if(access(COMANDOS_LOG, F_OK ) != -1 ) {  
+        log = fopen(COMANDOS_LOG, "rb+"); 
+    } else {                           
+        log = fopen(COMANDOS_LOG, "wb+");
+    }
+    return log;
+}
+
+int ler_log(){
+    FILE *log = abrir_log();
+    if (!log) {
+        perror("Erro ao abrir o arquivo de log");
+        return -1;
+    }
+    char linha[256];
+    int funcao = 0;
+    while (fgets(linha, sizeof(linha), log)) {
+        if (strncmp(linha, "GERAR_FICHA", 11) == 0) {
+            funcao = 1;
+        } else if (strncmp(linha, "IMPRIMIR", 8) == 0) {
+            funcao = 2;
+        }
+    }
+    fclose(log);
+    if(funcao != 0){
+      reescrever_log();
+    }
+    return funcao;
+}
+
+void escrever_log(int comando){
+    FILE *log = abrir_log();
+    if (log) {
+      if(comando == 1) {
+          fprintf(log, "GERAR_FICHA\n");
+      } else if(comando == 2) {
+          fprintf(log, "IMPRIMIR\n");
+      } else {
+          fprintf(log, "COMANDO DESCONHECIDO\n");
+      }
+      fclose(log);
+    }
+}
+
+void reescrever_log(){
+    FILE *log = abrir_log();
+    if (!log) return;
+
+    FILE *temp = fopen("comandos_temp.log", "w");
+    if (!temp) {
+        fclose(log);
+        return;
+    }
+
+    char linha[256];
+    int primeira = 1;
+    while (fgets(linha, sizeof(linha), log)) {
+        if (primeira) {
+            primeira = 0;
+            continue;
+        }
+        fputs(linha, temp);
+    }
+
+    fclose(log);
+    fclose(temp);
+
+    remove("comandos.log");
+    rename("comandos_temp.log", "comandos.log");
 }
