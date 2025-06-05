@@ -14,6 +14,7 @@ int main() {
     // Inicializa o TAD do Configs e o arquivo de comunicação.
     TadConfigs *tad_configs;
     int op;
+    int num = 1;
     tad_configs = configs_inicializar();
     if (!tad_configs) {
         printf("Erro ao criar TAD\n");
@@ -40,11 +41,16 @@ int main() {
                 break;
             }
             case 5: { // Inserer uma nova ficha no arquivo.
+                Ficha *ficha = malloc(sizeof(Ficha));
+                if (!ficha) {
+                    printf("Erro ao alocar memória para ficha!\n");
+                    break;
+                }
+                gerar_ficha_menu(ficha, num);
+                printf("Nova ficha gerada!\n");
+
                 if(tad_configs->configs.status == SIMULAR) {
                     configs_atualizar(tad_configs, AGUARDAR, 1); // Simulação aguarda a nova ficha ser gerada.
-                    Ficha *ficha;
-                    gerar_ficha_menu(ficha);
-                    printf("Nova ficha gerada!\n");
                     escrever_arquivo(ficha);
                     sleep(1);
                     configs_atualizar(tad_configs, GERAR_FICHA, 1); // Realiza as etapas de alocar a ficha no sistema.
@@ -52,9 +58,6 @@ int main() {
                     sleep(1);
                     configs_atualizar(tad_configs, SIMULAR, 1); // Retorna a simular.
                 } else {
-                    Ficha *ficha;
-                    gerar_ficha_menu(ficha);
-                    printf("Nova ficha gerada!\n");
                     escrever_arquivo(ficha);
                     sleep(1);
                     configs_atualizar(tad_configs, GERAR_FICHA, 1); // Realiza as etapas de alocar a ficha no sistema.
@@ -62,6 +65,8 @@ int main() {
                     sleep(1);
                     configs_atualizar(tad_configs, AGUARDAR, 1);
                 }
+                num++;
+                free(ficha);
                 break;
             }
             case 6: { // Imprimir lista de fichas.

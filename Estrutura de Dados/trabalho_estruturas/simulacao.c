@@ -12,13 +12,6 @@ void simular_contagem(int segundos) {
     printf("\n");
 }
 
-// Função para simular a ficha e reescrever o arquivo.
-void simular(Ficha *ficha) {
-    printf("Simulando...\n");
-    reescrever_arquivo();
-    simular_contagem(ficha->tempo);
-}
-
 int main() {
     // Inicializa o TAD do Configs e o arquivo de comunicação.
     TadConfigs *tad_configs;
@@ -36,17 +29,12 @@ int main() {
         return 1; // Falha na alocação de memória
     }
 
-    
-
-    // Inicializa a lista de fichas.
-    /*Lista *fila = criar_lista();
-    recuperar_lista(fila);
-    int num;
-    if (ler_arquivo(tad_configs) == NULL || fila->ultimo == NULL) {
-        num = 0; 
-    } else {
-        num = fila->ultimo->ficha;
-    }*/
+    // Inicializa a lista de fichas sem prioridade.
+    Lista *fila_sprior = criar_lista();
+    if (fila_sprior == NULL) {
+        printf("Erro ao criar lista de fichas.\n");
+        return 1; // Falha na alocação de memória
+    }
     
     // Carregar configurações da simulação e imprime elas.
     configs_ler(tad_configs);
@@ -56,48 +44,69 @@ int main() {
         sleep(tad_configs->configs.intervalo);
 
         if(tad_configs->configs.status == GERAR_FICHA){
-            Ficha* ficha = (Ficha *) malloc(sizeof(Ficha));
-            if (ficha == NULL) {
-                printf("Erro ao alocar memória para a ficha.\n");
-                return 1; // Falha na alocação de memória
-            }
+            Ficha* ficha_nova;
+            ficha_nova = ler_arquivo(tad_configs); // Lê o arquivo e busca a ficha
 
-            ficha = ler_arquivo_fim();
-            
-            switch (ficha->prioridade){
-                case 1: alocar_no_arvore(1); break;
-                case 2: alocar_no_arvore(2); break;
-                case 3: alocar_no_arvore(3); break;
-                case 4: alocar_no_arvore(4); break;
-                case 5: alocar_no_arvore(5); break;
-                default: alocar_no_arvore(6); break;
+            if (ficha_nova == NULL){
+                printf("Nenhuma ficha no arquivo.\n");
+            } else {
+                reescrever_arquivo();
+                if(ficha_nova->prioridade != 6){
+                    fluxo_fila_arvore(arv_prioridades, ficha_nova); 
+                } else {
+                    inserir_ficha_lista(fila_sprior, ficha_nova); 
+                }
+                printf("Nova ficha gerada!\n");
             }
 
         } else if (tad_configs->configs.status == SIMULAR) {
-            // Verifica se há fichas para simular na arvore de prioridade
-            // Se houver, simula a ficha, imprime na tela e altera a fila
-            // Reescreve o arquivo de fichas sem a ficha retirada
-            // Se não houver, vai para a fila de espera padrão e verifica se há fichas para simular
-            // Se houver, simula a ficha, imprime na tela e altera a fila
-            // Reescreve o arquivo de fichas sem a ficha retirada
-            // Se não houver, avisa que não há fichas para simular
-
-            /*if (ler_arquivo(tad_configs) != NULL && fila->primeiro != NULL) {
-                Ficha *ficha = fila->primeiro;
-                simular(ficha);
-                imprimir_ficha(ficha);
-                retirar_ficha_lista(fila); 
+            int p = 1;
+            No *priori = NULL;
+            while(p <= 5){
+                priori = buscar(arv_prioridades->raiz, p);
+                if (priori != NULL && priori->lista_fichas != NULL && priori->lista_fichas->primeiro != NULL){
+                    break;
+                }
+                p++;
+            }
+            if (priori == NULL || priori->lista_fichas->primeiro == NULL){
+                if (fila_sprior->primeiro != NULL){
+                    Ficha *ficha = fila_sprior->primeiro;
+                    simular_contagem(ficha->tempo);
+                    imprimir_ficha(ficha);
+                    retirar_ficha_lista(fila_sprior);  
+                } else {
+                    printf("Nenhuma ficha para simular.\n");
+                }
             } else {
-                printf("Nenhuma ficha para simular.\n");
-                //configs_atualizar(tad_configs, AGUARDAR, 1); 
-            }*/
+                Ficha *ficha = priori->lista_fichas->primeiro;
+                simular_contagem(ficha->tempo);
+                imprimir_ficha(ficha);
+                retirar_ficha_lista(priori->lista_fichas);
+
+                if (priori->lista_fichas->primeiro == NULL) {
+                    removerNo(arv_prioridades, priori);
+                }
+            }
         } else if (tad_configs->configs.status == IMPRIMIR) {
-            //printf("Imprimindo lista de fichas:\n");
-            //imprimir_lista(fila);
+            printf("Imprimindo lista de fichas:\n");
+            for(int i = 1; i <= 5; i++){
+                No *priori = buscar(arv_prioridades->raiz, i);
+                if (priori != NULL && priori->lista_fichas != NULL && priori->lista_fichas->primeiro != NULL) {
+                    printf("Prioridade %d:\n", i);
+                    imprimir_lista(priori->lista_fichas);
+                } else {
+                    printf("Prioridade %d: Nenhuma ficha.\n", i);
+                }
+            }
+            printf("Fichas sem prioridade:\n");
+            imprimir_lista(fila_sprior);
         } else {
             printf("Aguardando...\n");
         }
         configs_ler(tad_configs);
     }
+    destruir_arvore(arv_prioridades);
+    destruir_lista(fila_sprior);
     return 0;
 }

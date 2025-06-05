@@ -5,9 +5,7 @@
 #include <time.h>
 #include "tad_configs.h"
 
-// Necessário arquivo da lista de fichas ou da árvore?
-
-// Função para criar um novo nó
+// Função para criar um novo nó na árvore.
 No* criar_no(int chave) {
     No* novoNo = (No*) malloc(sizeof(No));
     novoNo->chave = chave;
@@ -26,6 +24,16 @@ ABB* criar_abb() {
 void inserir_no_na_arvore(ABB* abb, int chave) {
     if(abb->raiz == NULL){
         abb->raiz = criar_no(chave);
+        if (abb->raiz == NULL) {
+            printf("Erro ao alocar nó raiz.\n");
+            return;
+        }
+        abb->raiz->lista_fichas = criar_lista();
+        if (abb->raiz->lista_fichas == NULL) {
+            printf("Erro ao criar lista de fichas para o nó raiz.\n");
+            free(abb->raiz);
+            abb->raiz = NULL;
+        }
         return;
     } 
     No* atual = abb->raiz;
@@ -43,6 +51,11 @@ void inserir_no_na_arvore(ABB* abb, int chave) {
     }
 
     No* novoNo = criar_no(chave);
+    if (novoNo == NULL) {
+        printf("Erro ao alocar novo nó.\n");
+        return;
+    }
+
     novoNo->pai = pai; // Definir o pai do novo nó
     if(chave < pai->chave) {
         pai->esquerdo = novoNo; // Inserir como filho esquerdo
@@ -51,8 +64,19 @@ void inserir_no_na_arvore(ABB* abb, int chave) {
     }
 
     novoNo->lista_fichas = criar_lista();
+    if(novoNo->lista_fichas == NULL) {
+        printf("Erro ao criar lista de fichas para o nó.\n");
+        if(chave < pai->chave){
+            pai->esquerdo = NULL;
+        } else {
+            pai->direito = NULL;
+        } 
+        free(novoNo);
+        return; // Falha na alocação de memória
+    }
 }
 
+// Função para encontrar o menor nó da árvore
 No* minimo(No* node) {
     No* atual = node;
     while (atual && atual->esquerdo != NULL) {
@@ -61,6 +85,7 @@ No* minimo(No* node) {
     return atual; // Retorna o nó mínimo encontrado
 }
 
+// Função para encontrar o maior nó da árvore
 No* maximo(No* node) {
     No* atual = node;
     while (atual && atual->direito != NULL) {
@@ -69,20 +94,17 @@ No* maximo(No* node) {
     return atual; // Retorna o nó máximo encontrado
 }
 
+// Função para encontrar o sucessor de um nó na árvore
 No* sucessor(No* atual) {
-    // Caso 1: Se o nó tem um filho à direita,
-    // o sucessor é o menor nó na subárvore direita
+    // Caso 1: Se o nó tem filho à direita, o sucessor é o mínimo da subárvore direita
     if (atual->direito != NULL){
         return minimo(atual->direito);
     }
-
     // Caso 2: Se o nó não tem filho à direita, subir na árvore usando o pai
-    struct No_ar* ancestral = atual->pai;
-    // Enquanto o atual for igual ao filho da direita do pai,
-    // significa que ele é o filho da direita
+    struct No* ancestral = atual->pai;
     while (ancestral != NULL && atual == ancestral->direito) {
-        atual = ancestral; // subindo na árvore
-        ancestral = ancestral->pai; // subindo na árvore
+        atual = ancestral; 
+        ancestral = ancestral->pai; 
     }
     return ancestral;
 }
@@ -102,55 +124,101 @@ No* buscar(No* raiz, int chave) {
     return NULL; // Nó não encontrado
 }
 
-// Função para remover um nó da árvore.
-void remover_no_na_arvore(ABB* abb, No* no) {
-    No* no_remover;  
-    No* filho_no_remover;
-
-    // Se o nó a ser removido tem no máximo um filho
-    if (no->esquerdo == NULL || no->direito == NULL){
-        no_remover = no;
-    } else {
-        no_remover = sucessor(no);
+void removerNoFolha(ABB* abb, No* no) {
+    if (no == NULL) return;
+    
+    if (no->pai == NULL) { // Se o nó for a raiz da árvore
+        abb->raiz = NULL;
+    } else if (no->pai->esquerdo == no) { // Se for filho à esquerda do pai
+        no->pai->esquerdo = NULL;
+    } else if (no->pai->direito == no) { // Se for filho à direita do pai
+        no->pai->direito = NULL;
     }
 
-    // Atribua o filho do nó que será removido (pode ser NULL)
-    if (no_remover->esquerdo != NULL){
-        filho_no_remover = no_remover->esquerdo;
-    } else {
-        filho_no_remover = no_remover->direito;
-    }
-
-    // Se o filho do nó a ser removido não for nulo, atualize seu pai
-    if (filho_no_remover != NULL){
-        filho_no_remover->pai = no_remover->pai;
-    }
-
-    // Atualize o ponteiro do pai do nó a ser removido
-    if (no_remover->pai == NULL) {
-        abb->raiz = filho_no_remover;  // Caso o nó a ser removido seja a raiz
-    } else if (no_remover == no_remover->pai->esquerdo) {
-        no_remover->pai->esquerdo = filho_no_remover;
-    } else {
-        no_remover->pai->direito = filho_no_remover;
-    }
-
-    if (no_remover != no){
-        no->chave = no_remover->chave;
-    }
-
-    // Libere a memória do nó que foi removido
-    free(no_remover);
+    destruir_lista(no->lista_fichas);
+    free(no);
 }
 
-void alocar_no_na_arvore(ABB *abb, Ficha *ficha) {
+void removerNoComUmFilho(ABB* abb, No* no) {
+    if (no == NULL) return;
+
+    No* filho = (no->esquerdo != NULL) ? no->esquerdo : no->direito;
+    // Atualiza o ponteiro do pai do nó
+    if (no->pai == NULL) {
+        abb->raiz = filho;
+    } else if (no->pai->esquerdo == no) {
+        no->pai->esquerdo = filho;
+    } else if (no->pai->direito == no) {
+        no->pai->direito = filho;
+    }
+    if(filho != NULL){
+        filho->pai = no->pai;
+    }
+    destruir_lista(no->lista_fichas);
+    free(no);
+}
+
+void removerNoComDoisFilhos(ABB* abb, No* no) {
+    if (no == NULL) return;
+    // 1. Encontra o sucessor
+    No* suc = sucessor(no); // Deve retornar o menor da subárvore direita
+    // 2. Copia o valor do sucessor para o nó atual
+    no->chave = suc->chave;
+    // 3. Remove o sucessor (que terá no máximo um filho)
+    if (suc->esquerdo == NULL && suc->direito == NULL){
+        removerNoFolha(abb, suc);
+    } else {
+        removerNoComUmFilho(abb, suc);
+    }
+}
+
+void removerNo(ABB* abb, No* no) {
+    if (no == NULL) return;
+
+    if (no->esquerdo == NULL && no->direito == NULL) {
+        // Caso 1: nó folha
+        removerNoFolha(abb, no);
+    } else if (no->esquerdo == NULL || no->direito == NULL) {
+        // Caso 2: nó com um único filho
+        removerNoComUmFilho(abb, no);
+    } else {
+        // Caso 3: nó com dois filhos
+        removerNoComDoisFilhos(abb, no);
+    }
+}
+
+void fluxo_fila_arvore(ABB *abb, Ficha *ficha) {
+    if (abb == NULL || ficha == NULL) return;
+    
     No *priori = buscar(abb->raiz, ficha->prioridade);
     if(priori == NULL){
         inserir_no_na_arvore(abb, ficha->prioridade); // cria um nó na arvore
         priori = buscar(abb->raiz, ficha->prioridade); // Busca novamente para obter o nó recém-criado
+        if (priori == NULL) {
+            printf("Erro ao criar ou buscar nó de prioridade %d.\n", ficha->prioridade);
+            return;
+        }
     }
-    inserir_ficha_lista(priori->lista_fichas, ficha);
+    if (priori->lista_fichas == NULL) {
+        printf("Erro: lista de fichas não alocada para prioridade %d.\n", ficha->prioridade);
+        return;
+    }
+    if (inserir_ficha_lista(priori->lista_fichas, ficha) == NULL) {
+        printf("Erro ao inserir ficha na lista da prioridade %d.\n", ficha->prioridade);
+        return;
+    }
+}
 
-    // Se não encontrar, cria um novo nó de prioridade e cria a lista daquela prioridade
-    // Se encontrar, insere a ficha na lista daquela prioridade
+void destruir_no(No *no) {
+    if (no == NULL) return;
+    destruir_no(no->esquerdo);
+    destruir_no(no->direito);
+    destruir_lista(no->lista_fichas);
+    free(no);
+}
+
+void destruir_arvore(ABB *abb) {
+    if (abb == NULL) return;
+    destruir_no(abb->raiz);
+    abb->raiz = NULL;
 }

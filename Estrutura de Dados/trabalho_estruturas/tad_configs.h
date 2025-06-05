@@ -18,11 +18,11 @@ typedef struct lista {
     Ficha *ultimo;
 } Lista;
 
-typedef struct No_ar {
+typedef struct No {
     int chave;
-    struct No_ar* esquerdo;
-    struct No_ar* direito;
-    struct No_ar* pai;
+    struct No* esquerdo;
+    struct No* direito;
+    struct No* pai;
     Lista *lista_fichas;
 } No;
 
@@ -58,36 +58,35 @@ void configs_ler(TadConfigs *tad);
 void configs_mostrar(TadConfigs *tad);
 void configs_atualizar(TadConfigs *tad, statusProcessamento status, int intervalo);
 
-// Parte 1 - Lista de Fichas
-Lista *criar_lista();
-Ficha *inserir_ficha_lista(Lista *lista, int num);
-void retirar_ficha_lista(Lista *lista);
-void destruir_lista(Lista *lista);
-void imprimir_lista(Lista *lista);
-void recuperar_lista(Lista *lista);
-void imprimir_ficha(Ficha *ficha);
-
-void gerar_ficha_menu(Ficha *ficha);
-void *preencher_nome(char nome[], int tamanho);
-void *preencher_medico(char medico[], int tamanho);
-void *selecionar_prioridade(int prioridade);
-int intervalo();
-
-// Parte 1 - Arquivo de Fichas
 FILE *abrir_arquivo();
+Lista *criar_lista();
+Ficha *inserir_ficha_lista(Lista *lista, Ficha *ficha);
 Ficha *ler_arquivo(TadConfigs *tad);
-void escrever_arquivo(Ficha *ficha);
-void reescrever_arquivo();
-
-// Parte 2 - Arvore de Prioridade
 ABB *criar_abb();
 No *criar_no(int chave);
 No *buscar(No *raiz, int chave);
 No *sucessor(No *atual);
 No *minimo(No *atual);
 No *maximo(No *atual);
+void retirar_ficha_lista(Lista *lista);
+void destruir_lista(Lista *lista);
+void imprimir_lista(Lista *lista);
+void recuperar_lista(Lista *lista);
+void imprimir_ficha(Ficha *ficha);
+void gerar_ficha_menu(Ficha *ficha, int num);
+void *preencher_nome(char nome[], int tamanho);
+void *preencher_medico(char medico[], int tamanho);
+void selecionar_prioridade(int *prioridade);
+void escrever_arquivo(Ficha *ficha);
+void reescrever_arquivo();
 void inserir_no_na_arvore(ABB *abb, int chave);
-void remover_no_na_arvore(ABB *abb, int chave);
-void alocar_no_na_arvore(ABB *abb, Ficha *ficha);
+void removerNo(ABB *abb, No *no);
+void removerNoFolha(ABB *abb, No *no);
+void removerNoComUmFilho(ABB *abb, No *no);
+void removerNoComDoisFilhos(ABB *abb, No *no);
+void fluxo_fila_arvore(ABB *abb, Ficha *ficha);
+void destruir_no(No *no);
+void destruir_arvore(ABB *abb);
+int intervalo();
 
 #endif
