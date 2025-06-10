@@ -41,7 +41,7 @@ int main() {
     configs_mostrar(tad_configs);
 
     while(tad_configs->configs.status != TERMINAR) {
-        sleep(tad_configs->configs.intervalo);
+        sleep(tad_configs->configs.intervalo); 
         int comando = ler_log();
 
         if(comando == 1){
@@ -88,16 +88,16 @@ int main() {
             if (priori == NULL || priori->lista_fichas->primeiro == NULL){
                 if (fila_sprior->primeiro != NULL){
                     Ficha *ficha = fila_sprior->primeiro;
-                    simular_contagem(ficha->tempo);
                     imprimir_ficha(ficha);
+                    simular_contagem(ficha->tempo);
                     retirar_ficha_lista(fila_sprior);  
                 } else {
                     printf("Nenhuma ficha para simular.\n");
                 }
             } else {
                 Ficha *ficha = priori->lista_fichas->primeiro;
-                simular_contagem(ficha->tempo);
                 imprimir_ficha(ficha);
+                simular_contagem(ficha->tempo);
                 retirar_ficha_lista(priori->lista_fichas);
 
                 if (priori->lista_fichas->primeiro == NULL) {

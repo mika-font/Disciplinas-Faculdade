@@ -127,6 +127,7 @@ No* buscar(No* raiz, int chave) {
     return NULL; // Nó não encontrado
 }
 
+// Remove um nó sem filhos
 void removerNoFolha(ABB* abb, No* no) {
     if (no == NULL) return;
     
@@ -142,11 +143,12 @@ void removerNoFolha(ABB* abb, No* no) {
     free(no);
 }
 
+// Remove um nó com um filho
 void removerNoComUmFilho(ABB* abb, No* no) {
     if (no == NULL) return;
 
     No* filho = (no->esquerdo != NULL) ? no->esquerdo : no->direito;
-    // Atualiza o ponteiro do pai do nó
+
     if (no->pai == NULL) {
         abb->raiz = filho;
     } else if (no->pai->esquerdo == no) {
@@ -161,13 +163,11 @@ void removerNoComUmFilho(ABB* abb, No* no) {
     free(no);
 }
 
+// Remove nó com dois filhos
 void removerNoComDoisFilhos(ABB* abb, No* no) {
     if (no == NULL) return;
-    // 1. Encontra o sucessor
     No* suc = sucessor(no); // Deve retornar o menor da subárvore direita
-    // 2. Copia o valor do sucessor para o nó atual
     no->chave = suc->chave;
-    // 3. Remove o sucessor (que terá no máximo um filho)
     if (suc->esquerdo == NULL && suc->direito == NULL){
         removerNoFolha(abb, suc);
     } else {
@@ -175,6 +175,7 @@ void removerNoComDoisFilhos(ABB* abb, No* no) {
     }
 }
 
+// Verifica o caso de remoção e chama função correta
 void removerNo(ABB* abb, No* no) {
     if (no == NULL) return;
 
@@ -190,6 +191,7 @@ void removerNo(ABB* abb, No* no) {
     }
 }
 
+// Realiza a busca na árvore e organiza as fichas do respectivo nó
 void fluxo_fila_arvore(ABB *abb, Ficha *ficha) {
     if (abb == NULL || ficha == NULL) return;
     
@@ -212,6 +214,7 @@ void fluxo_fila_arvore(ABB *abb, Ficha *ficha) {
     }
 }
 
+// Destrói o nó da árvore de forma recursiva
 void destruir_no(No *no) {
     if (no == NULL) return;
     destruir_no(no->esquerdo);
@@ -220,6 +223,7 @@ void destruir_no(No *no) {
     free(no);
 }
 
+// Destrói a árvore
 void destruir_arvore(ABB *abb) {
     if (abb == NULL) return;
     destruir_no(abb->raiz);

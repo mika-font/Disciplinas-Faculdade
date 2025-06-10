@@ -34,9 +34,7 @@ typedef enum {
     AGUARDAR,       //Aguarda comandos do menu
     SIMULAR,        //Funciona o atendimento
     TERMINAR,       //Finaliza a simulação
-    GERAR_FICHA,    //Gera uma nova ficha
     LER,            //Lê o arquivo e executa as fichas
-    IMPRIMIR,       //Imprime as fichas e suas informações
 } statusProcessamento;
 
 typedef struct conf {
@@ -59,6 +57,7 @@ void configs_mostrar(TadConfigs *tad);
 void configs_atualizar(TadConfigs *tad, statusProcessamento status, int intervalo);
 
 FILE *abrir_arquivo();
+FILE *abrir_log();
 Lista *criar_lista();
 Ficha *inserir_ficha_lista(Lista *lista, Ficha *ficha);
 Ficha *ler_arquivo(TadConfigs *tad);
@@ -86,11 +85,9 @@ void removerNoComDoisFilhos(ABB *abb, No *no);
 void fluxo_fila_arvore(ABB *abb, Ficha *ficha);
 void destruir_no(No *no);
 void destruir_arvore(ABB *abb);
-int intervalo();
-
-FILE *abrir_log();
-int ler_log();
 void escrever_log(int comando);
 void reescrever_log(); 
+int intervalo();
+int ler_log();
 
 #endif

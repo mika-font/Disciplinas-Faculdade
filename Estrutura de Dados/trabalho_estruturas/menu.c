@@ -3,7 +3,7 @@
 #include "tad_configs.h"
 
 int menu() {
-    printf("1. Aguardar\n2. Simular\n3. Terminar\n4. Ler\n5. Nova Ficha\n6. Imprimir Fila\n0. Sair\n");
+    printf("1. Aguardar\n2. Simular\n3. Terminar\n4. Ler\n5. Nova Ficha\n6. Imprimir Filas\n0. Sair\n");
     printf("Informe a opção desejada: ");
     int aux;
     int res = scanf("%d", &aux);
