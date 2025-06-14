@@ -27,6 +27,11 @@ int main() {
         return 1;
     }
 
+    Lista * relatorio = criar_lista();
+    if(relatorio == NULL){
+        return;
+    }
+
     do {
         op = menu();
         switch(op) {

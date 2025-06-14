@@ -4,6 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef struct relatorio{
+    int especialidade;
+    int quantidade;
+}Relat;
+
 typedef struct no {
     int ficha;
     int tempo;
