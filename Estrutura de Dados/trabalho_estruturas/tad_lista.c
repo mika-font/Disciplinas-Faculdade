@@ -71,6 +71,22 @@ void *preencher_medico(char medico[], int tamanho){
   }
 }
 
+void criar_relatorio(Relat relatorio[]){
+  const char *especialidades[6] = {
+      "Cardiologista",
+      "Dermatologista",
+      "Neurologista",
+      "Pediatra",
+      "Ortopedista",
+      "Clínico Geral"
+  };
+
+  for (int i = 0; i < 6; i++) {
+    strcpy(relatorio[i].especialidade, especialidades[i]);
+    relatorio[i].quantidade = 0;
+  }
+}
+
 // Cria uma lista.
 Lista *criar_lista() {
   Lista *lista = (Lista *) malloc(sizeof(Lista));
@@ -99,19 +115,52 @@ Ficha *inserir_ficha_lista(Lista *lista, Ficha *ficha){
   return ficha;
 }
 
+void registrar_relatorio(char medico[], Relat relatorio[]){
+  for(int i = 0; i < 6; i++){
+    if(strcmp(medico, relatorio[i].especialidade) == 0){ // Verifica se as string são iguais
+      relatorio[i].quantidade++;
+    }
+  }
+}
+
 // Gera uma ficha no menu e preenche os campos necessários.
-void gerar_ficha_menu(Ficha *ficha, int num) {
+void gerar_ficha_menu(Ficha *ficha, int num, Relat *relatorio) {
   ficha->ficha = num;
   ficha->tempo = intervalo();
   preencher_nome(ficha->nome, 50);
   preencher_medico(ficha->medico, 50);
+  registrar_relatorio(ficha->medico, relatorio);
   selecionar_prioridade(&ficha->prioridade);
 }
 
 // Imprime a ficha retirada da lista e do arquivo.
 void imprimir_ficha(Ficha *ficha){
-  printf("Número: %d | Paciente: %s | Especialista: %s | Prioridade: %d ", ficha->ficha, ficha->nome, ficha->medico, ficha->prioridade);
-  printf("\n");
+  printf("Número:       F%d\nPaciente:     %s\nEspecialista: %s\nPrioridade:   %d\n", ficha->ficha, ficha->nome, ficha->medico, ficha->prioridade);
+}
+
+void imprimir_proximos(ABB *arvore, Lista *lista){
+    // Próximo com prioridade
+    No *prox_prior = NULL;
+    Ficha *prox_ficha_prior = NULL;
+    for (int i = 1; i <= 5; i++) {
+        prox_prior = buscar(arvore->raiz, i);
+        if (prox_prior && prox_prior->lista_fichas && prox_prior->lista_fichas->primeiro) {
+            prox_ficha_prior = prox_prior->lista_fichas->primeiro;
+            break;
+        }
+    }
+    if (prox_ficha_prior) {
+        printf("-> Próximo com prioridade: F%d.\n", prox_ficha_prior->ficha);
+    } else {
+        printf("-> Próximo com prioridade: Fila vazia.\n");
+    }
+
+    // Próximo sem prioridade
+    if (lista && lista->primeiro) {
+        printf("-> Próximo sem prioridade: F%d.\n", lista->primeiro->ficha);
+    } else {
+        printf("-> Próximo sem prioridade: Fila vazia.\n");
+    }
 }
 
 // Retira a ficha da lista e libera a memória.
@@ -133,16 +182,14 @@ void retirar_ficha_lista(Lista *lista){
 // Imprime a lista presente na memória do programa.
 void imprimir_lista(Lista *lista) {
   if (lista->primeiro == NULL) {
-    printf("Lista vazia!\n");
+    printf("Lista vazia!\n\n");
     return;
   }
   Ficha *atual = lista->primeiro;
   while (atual != NULL) {
-    printf("Número: %d | Tempo: %d | Paciente: %s | Especialista: %s | Prioridade: %d", atual->ficha, atual->tempo, atual->nome, atual->medico, atual->prioridade);
-    printf("\n");
+    printf("Número:       F%d\nTempo:        %d\nPaciente:     %s\nEspecialista: %s\nPrioridade:   %d\n\n", atual->ficha, atual->tempo, atual->nome, atual->medico, atual->prioridade);
     atual = atual->prox;
   }
-  printf("\n");
 }
 
 // Destrói a lista na memória do programa.

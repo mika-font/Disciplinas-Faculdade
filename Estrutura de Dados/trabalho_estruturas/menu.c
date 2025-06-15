@@ -3,7 +3,7 @@
 #include "tad_configs.h"
 
 int menu() {
-    printf("1. Aguardar\n2. Simular\n3. Terminar\n4. Ler\n5. Nova Ficha\n6. Imprimir Filas\n0. Sair\n");
+    printf("1. Aguardar\n2. Simular\n3. Terminar\n4. Ler\n5. Nova Ficha\n6. Imprimir Filas\n7. Imprimir Relatório\n0. Sair\n");
     printf("Informe a opção desejada: ");
     int aux;
     int res = scanf("%d", &aux);
@@ -27,10 +27,8 @@ int main() {
         return 1;
     }
 
-    Lista * relatorio = criar_lista();
-    if(relatorio == NULL){
-        return;
-    }
+    Relat relatorio[6];
+    criar_relatorio(relatorio);
 
     do {
         op = menu();
@@ -58,11 +56,10 @@ int main() {
                     printf("Erro ao alocar memória para ficha!\n");
                     break;
                 }
-                gerar_ficha_menu(ficha, num);
+                gerar_ficha_menu(ficha, num, relatorio);
                 printf("Nova ficha gerada!\n");
                 escrever_arquivo(ficha); 
                 escrever_log(1);
-                printf("Ficha alocada no sistema!\n");
 
                 num++;
                 free(ficha);
@@ -70,6 +67,15 @@ int main() {
             }
             case 6: { // Imprimir lista de fichas.
                 escrever_log(2);
+                break;
+            }
+            case 7: { // Imprimir relatorio.
+                printf("\nRelatorio:");
+                printf("\n=========================\n\n");
+                for (int i = 0; i < 6; i++){
+                    printf("%s: %d\n", relatorio[i].especialidade, relatorio[i].quantidade);
+                }
+                printf("\n=========================\n\n");
                 break;
             }
             case 0: {

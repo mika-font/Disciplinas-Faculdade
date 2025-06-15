@@ -61,18 +61,21 @@ int main() {
             }
 
         } else if (comando == 2) {
-            printf("Imprimindo lista de fichas:\n");
+            printf("\nImprimindo Listas de Fichas:");
+            printf("\n==============================\n\n");
             for(int i = 1; i <= 5; i++){
                 No *priori = buscar(arv_prioridades->raiz, i);
                 if (priori != NULL && priori->lista_fichas != NULL && priori->lista_fichas->primeiro != NULL) {
-                    printf("Prioridade %d:\n", i);
+                    printf("Prioridade %d:\n\n", i);
                     imprimir_lista(priori->lista_fichas);
                 } else {
-                    printf("Prioridade %d: Lista vazia.\n", i);
+                    printf("Prioridade %d: Lista vazia.\n\n", i);
                 }
             }
-            printf("Fichas sem prioridade:\n");
+            printf("==============================\n\n");
+            printf("Fichas sem prioridade:\n\n");
             imprimir_lista(fila_sprior);
+            printf("==============================\n\n");
         } 
 
         if (tad_configs->configs.status == SIMULAR) {
@@ -88,21 +91,30 @@ int main() {
             if (priori == NULL || priori->lista_fichas->primeiro == NULL){
                 if (fila_sprior->primeiro != NULL){
                     Ficha *ficha = fila_sprior->primeiro;
+                    int tempo = ficha->tempo;
+                    printf("\n==============================\n\n");
                     imprimir_ficha(ficha);
-                    simular_contagem(ficha->tempo);
-                    retirar_ficha_lista(fila_sprior);  
+                    printf("\n");
+                    retirar_ficha_lista(fila_sprior);
+                    imprimir_proximos(arv_prioridades, fila_sprior);
+                    printf("\n");
+                    simular_contagem(tempo);
+                    printf("\n==============================\n\n");
                 } else {
                     printf("Nenhuma ficha para simular.\n");
                 }
             } else {
                 Ficha *ficha = priori->lista_fichas->primeiro;
+                int tempo = ficha->tempo;
+                printf("\n==============================\n\n");
                 imprimir_ficha(ficha);
-                simular_contagem(ficha->tempo);
                 retirar_ficha_lista(priori->lista_fichas);
-
                 if (priori->lista_fichas->primeiro == NULL) {
                     removerNo(arv_prioridades, priori);
                 }
+                imprimir_proximos(arv_prioridades, fila_sprior);
+                simular_contagem(tempo);
+                printf("\n==============================\n\n");
             }
 
         } 

@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 typedef struct relatorio{
-    int especialidade;
+    char especialidade[50];
     int quantidade;
 }Relat;
 
@@ -72,11 +72,13 @@ No *buscar(No *raiz, int chave);
 No *sucessor(No *atual);
 No *minimo(No *atual);
 No *maximo(No *atual);
+void criar_relatorio(Relat *relatorio);
 void retirar_ficha_lista(Lista *lista);
 void destruir_lista(Lista *lista);
 void imprimir_lista(Lista *lista);
 void imprimir_ficha(Ficha *ficha);
-void gerar_ficha_menu(Ficha *ficha, int num);
+void imprimir_proximos(ABB *arvore, Lista *lista);
+void gerar_ficha_menu(Ficha *ficha, int num, Relat *relatorio);
 void *preencher_nome(char nome[], int tamanho);
 void *preencher_medico(char medico[], int tamanho);
 void selecionar_prioridade(int *prioridade);
