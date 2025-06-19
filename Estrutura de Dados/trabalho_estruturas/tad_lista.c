@@ -14,24 +14,24 @@ void selecionar_prioridade(int *prioridade) {
   printf("Informe a prioridade do paciente: ");
   scanf("%d", &aux);
   switch(aux) {
-    case 1: *prioridade = 1; break; // Gestante
-    case 2: *prioridade = 2; break; // Idoso 
-    case 3: *prioridade = 3; break; // Pessoa com necessidades especiais
-    case 4: *prioridade = 4; break; // Criança de colo
-    case 5: *prioridade = 5; break; // Doença crônica
-    default: *prioridade = 6; break; // Demais pacientes
+    case 1: *prioridade = 1; break;   // Gestante
+    case 2: *prioridade = 2; break;   // Idoso 
+    case 3: *prioridade = 3; break;   // Pessoa com necessidades especiais
+    case 4: *prioridade = 4; break;   // Criança de colo
+    case 5: *prioridade = 5; break;   // Doença crônica
+    default: *prioridade = 6; break;  // Demais pacientes
   }
 }
 
 // Função para gerar um tempo de atendimento aleatório.
 int intervalo(){
-  return rand() % (10 - 5 + 1) + 5;
+  return (rand() % 6) + 5;
 }
 
 // Função para preencher o campo nome da ficha.
 void *preencher_nome(char nome[], int tamanho){
   int c;
-  while ((c = getchar()) != '\n' && c != EOF); // Limpa o buffer de entrada
+  while ((c = getchar()) != '\n' && c != EOF); // Lê tudo o que foi digitado anteriormente até apertar enter
   printf("Digite o nome do paciente: ");
   fgets(nome, tamanho, stdin);
   nome[strcspn(nome, "\n")] = '\0';
@@ -71,6 +71,7 @@ void *preencher_medico(char medico[], int tamanho){
   }
 }
 
+// Função para criar o relatório
 void criar_relatorio(Relat relatorio[]){
   const char *especialidades[6] = {
       "Cardiologista",
@@ -87,21 +88,21 @@ void criar_relatorio(Relat relatorio[]){
   }
 }
 
-// Cria uma lista.
+// Função para criar uma lista.
 Lista *criar_lista() {
   Lista *lista = (Lista *) malloc(sizeof(Lista));
   if (lista == NULL) {
     printf("Erro ao alocar memória.");
-    return NULL; // Falha na alocação de memória
+    return NULL;
   }
   lista->primeiro = NULL;
   lista->ultimo = NULL;
   return lista;
 }
 
-// Insere a ficha na lista de acordo com a prioridade.
+// Função para inserir a ficha na respectiva fila.
 Ficha *inserir_ficha_lista(Lista *lista, Ficha *ficha){
-  if (lista == NULL || ficha == NULL) return NULL; // Verificação de segurança
+  if (lista == NULL || ficha == NULL) return NULL; 
 
   ficha->prox = NULL;
 
@@ -115,15 +116,16 @@ Ficha *inserir_ficha_lista(Lista *lista, Ficha *ficha){
   return ficha;
 }
 
+// Função para registrar a quantidade de seleções de um determinado médico.
 void registrar_relatorio(char medico[], Relat relatorio[]){
   for(int i = 0; i < 6; i++){
-    if(strcmp(medico, relatorio[i].especialidade) == 0){ // Verifica se as string são iguais
+    if(strcmp(medico, relatorio[i].especialidade) == 0){ 
       relatorio[i].quantidade++;
     }
   }
 }
 
-// Gera uma ficha no menu e preenche os campos necessários.
+// Função para preencher os campos necessários da ficha.
 void gerar_ficha_menu(Ficha *ficha, int num, Relat *relatorio) {
   ficha->ficha = num;
   ficha->tempo = intervalo();
@@ -133,11 +135,12 @@ void gerar_ficha_menu(Ficha *ficha, int num, Relat *relatorio) {
   selecionar_prioridade(&ficha->prioridade);
 }
 
-// Imprime a ficha retirada da lista e do arquivo.
+// Função para imprimir a ficha retirada da lista.
 void imprimir_ficha(Ficha *ficha){
   printf("Número:       F%d\nPaciente:     %s\nEspecialista: %s\nPrioridade:   %d\n", ficha->ficha, ficha->nome, ficha->medico, ficha->prioridade);
 }
 
+// Função para imprimir os próximos das filas
 void imprimir_proximos(ABB *arvore, Lista *lista){
     // Próximo com prioridade
     No *prox_prior = NULL;
@@ -163,7 +166,7 @@ void imprimir_proximos(ABB *arvore, Lista *lista){
     }
 }
 
-// Retira a ficha da lista e libera a memória.
+// Função para retirar a ficha da respectiva fila.
 void retirar_ficha_lista(Lista *lista){
   if (lista == NULL || lista->primeiro == NULL) {
     return;
@@ -179,7 +182,7 @@ void retirar_ficha_lista(Lista *lista){
   }
 }
 
-// Imprime a lista presente na memória do programa.
+// Função para imprimir todas as fichas de uma fila.
 void imprimir_lista(Lista *lista) {
   if (lista->primeiro == NULL) {
     printf("Lista vazia!\n\n");
@@ -192,7 +195,7 @@ void imprimir_lista(Lista *lista) {
   }
 }
 
-// Destrói a lista na memória do programa.
+// Função para destruir a fila.
 void destruir_lista(Lista *lista) {
   if (lista == NULL || lista->primeiro == NULL) {
     return;
@@ -208,18 +211,18 @@ void destruir_lista(Lista *lista) {
   lista->ultimo = NULL;
 }
 
-// Abre o arquivo de fichas, criando-o se não existir.
+// Função para criar e/ou abrir o arquivo de ficha.
 FILE *abrir_arquivo() {
     FILE *arquivo;
     if(access(FILA_FICHAS, F_OK ) != -1 ) {   // Arquivo já existe
-      arquivo = fopen(FILA_FICHAS, "r+");     // Apenas abre o arquivo
+      arquivo = fopen(FILA_FICHAS, "r+");     
     } else {                                  // Arquivo não existe
-      arquivo = fopen(FILA_FICHAS, "w+");     // Cria arquivo novo
+      arquivo = fopen(FILA_FICHAS, "w+");     
     }
     return arquivo;
 }
 
-// Escreve a ficha no arquivo.
+// Função para escrever no arquivo fila.txt.
 void escrever_arquivo(Ficha *ficha) {
     FILE *arquivo = abrir_arquivo();
     if (ficha && arquivo) {
@@ -229,7 +232,7 @@ void escrever_arquivo(Ficha *ficha) {
     }
 }
 
-// Lê o arquivo e retira a ficha do arquivo.
+// Função para ler e retirar a ficha do arquivo fila.txt.
 Ficha *ler_arquivo(TadConfigs *tad) {
     FILE *arquivo = abrir_arquivo();
     if (!arquivo) return NULL;
@@ -261,7 +264,7 @@ Ficha *ler_arquivo(TadConfigs *tad) {
     return ficha;
 }
 
-// Reescreve o arquivo sem a ficha retirada.
+// Função para reescrever o arquivo fila.txt sem a primeira linha.
 void reescrever_arquivo() {
     FILE *arquivo = abrir_arquivo();
     if (!arquivo) {

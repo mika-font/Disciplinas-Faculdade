@@ -7,10 +7,9 @@ int menu() {
     printf("Informe a opção desejada: ");
     int aux;
     int res = scanf("%d", &aux);
-    // Limpa o buffer do teclado e verifica entrada indevida
     if (res != 1) {
         int c;
-        while ((c = getchar()) != '\n' && c != EOF); // Limpa o buffer até o fim da linha
+        while ((c = getchar()) != '\n' && c != EOF); // Limpa o buffer até o fim da linha e o enter
         aux = -1; 
     }
     return aux;

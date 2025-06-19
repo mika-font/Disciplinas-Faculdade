@@ -26,32 +26,32 @@ int main() {
     ABB *arv_prioridades = criar_abb();
     if (arv_prioridades == NULL){
         printf("Erro ao criar árvore de prioridades.\n");
-        return 1; // Falha na alocação de memória
+        return 1;
     }
 
     // Inicializa a lista de fichas sem prioridade.
     Lista *fila_sprior = criar_lista();
     if (fila_sprior == NULL) {
         printf("Erro ao criar lista de fichas.\n");
-        return 1; // Falha na alocação de memória
+        return 1;
     }
     
-    // Carregar configurações da simulação e imprime elas.
+    // Carregar configurações da simulação e imprime.
     configs_ler(tad_configs);
     configs_mostrar(tad_configs);
 
     while(tad_configs->configs.status != TERMINAR) {
         sleep(tad_configs->configs.intervalo); 
-        int comando = ler_log();
+        int comando = ler_log(); // comando.log
 
         if(comando == 1){
             Ficha* ficha_nova;
-            ficha_nova = ler_arquivo(tad_configs); // Lê o arquivo e busca a ficha
+            ficha_nova = ler_arquivo(tad_configs); //fila.txt
 
             if (ficha_nova == NULL){
                 printf("Nenhuma ficha no arquivo.\n");
             } else {
-                reescrever_arquivo();
+                reescrever_arquivo(); //fila.txt
                 if(ficha_nova->prioridade != 6){
                     fluxo_fila_arvore(arv_prioridades, ficha_nova); 
                 } else {
@@ -123,7 +123,7 @@ int main() {
             printf("Aguardando...\n");
         }
 
-        configs_ler(tad_configs);
+        configs_ler(tad_configs); //configuracoes.dat
     }
     
     destruir_arvore(arv_prioridades);

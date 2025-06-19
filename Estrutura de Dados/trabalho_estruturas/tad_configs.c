@@ -4,8 +4,8 @@
 #include <string.h>
 #include "tad_configs.h"
 
-#define CONFIGS_FILE "./configuracoes.dat" //Arquivo de comunicação entre os prompts
-#define COMANDOS_LOG "./comandos.log" //Arquivo de log dos comandos
+#define CONFIGS_FILE "./configuracoes.dat"  //Arquivo de comunicação entre os prompts
+#define COMANDOS_LOG "./comandos.log"       //Arquivo de log dos comandos
 
 TadConfigs *configs_inicializar() {//const char *nome_arquivo
     TadConfigs *tad = malloc(sizeof(TadConfigs));
@@ -22,6 +22,7 @@ TadConfigs *configs_inicializar() {//const char *nome_arquivo
     }
     return tad;
 }
+
 FILE *configs_abrir() {
     FILE *arquivo;
     if(access(CONFIGS_FILE, F_OK ) != -1 ) {  // Arquivo já existe
@@ -37,9 +38,11 @@ FILE *configs_abrir() {
     }
     return arquivo;
 }
+
 void configs_fechar(FILE *arquivo) { // Fecha o arquivo
     fclose(arquivo);
 }
+
 void configs_destruir(TadConfigs *tad) {
   if (tad) {
     if (tad->arquivo) {
@@ -48,6 +51,7 @@ void configs_destruir(TadConfigs *tad) {
     free(tad);
   }
 }
+
 void configs_salvar(TadConfigs *tad) { // Salva os dados no arquivo no HD.
     FILE *arquivo = configs_abrir();
     if (tad && arquivo) {
@@ -55,6 +59,7 @@ void configs_salvar(TadConfigs *tad) { // Salva os dados no arquivo no HD.
     }
     configs_fechar(arquivo);
 }
+
 void configs_ler(TadConfigs *tad) { //
   FILE *arquivo = configs_abrir();
   if (tad && arquivo) {
@@ -62,6 +67,7 @@ void configs_ler(TadConfigs *tad) { //
   }
   configs_fechar(arquivo);
 }
+
 void configs_mostrar(TadConfigs *tad) {
   if (tad) {
       // Exibir configurações (carrega do arquivo existente se existir)
@@ -70,6 +76,7 @@ void configs_mostrar(TadConfigs *tad) {
       printf(" - Intervalo: %d segundo\n\n", tad->configs.intervalo);
   }
 }
+
 void configs_atualizar(TadConfigs *tad, statusProcessamento status, int intervalo) {
   if(tad) { //Atualiza o arquivo de comunicação
     tad->configs.status = status;
@@ -78,6 +85,7 @@ void configs_atualizar(TadConfigs *tad, statusProcessamento status, int interval
   }
 }
 
+// Função para criar e/ou abrir o comando.log
 FILE *abrir_log(){
     FILE *log;
     if(access(COMANDOS_LOG, F_OK ) != -1 ) {  
@@ -88,6 +96,7 @@ FILE *abrir_log(){
     return log;
 }
 
+// Função para ler a primeira linha do arquivo comando.log
 int ler_log(){
     FILE *log = abrir_log();
     if (!log) {
@@ -110,6 +119,7 @@ int ler_log(){
     return funcao;
 }
 
+// Função para escrever no arquivo comando.log.
 void escrever_log(int comando){
     FILE *log = abrir_log();
     if (log) {
@@ -124,6 +134,7 @@ void escrever_log(int comando){
     }
 }
 
+// Função para reescrever o arquivo comando.log sem a primeira linha.
 void reescrever_log(){
     FILE *log = abrir_log();
     if (!log) return;

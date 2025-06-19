@@ -4,11 +4,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Estrutura do Relatório
 typedef struct relatorio{
     char especialidade[50];
     int quantidade;
 }Relat;
 
+// Estrutura da Ficha
 typedef struct no {
     int ficha;
     int tempo;
@@ -18,11 +20,13 @@ typedef struct no {
     struct no *prox; 
 } Ficha;
 
+// Estrutura da Fila
 typedef struct lista {
     Ficha *primeiro;
     Ficha *ultimo;
 } Lista;
 
+// Estrutra do Nó da Árvore
 typedef struct No {
     int chave;
     struct No* esquerdo;
@@ -31,22 +35,26 @@ typedef struct No {
     Lista *lista_fichas;
 } No;
 
+// Estrutura da Árvore
 typedef struct {
     No* raiz;
 } ABB;
 
+// Funções do Simulação
 typedef enum {
     AGUARDAR,       //Aguarda comandos do menu
     SIMULAR,        //Funciona o atendimento
     TERMINAR,       //Finaliza a simulação
-    LER,            //Lê o arquivo e executa as fichas
+    LER,            //Lê o arquivo de configs
 } statusProcessamento;
 
+// Estrutura do Intervalo de Processamento
 typedef struct conf {
     statusProcessamento status;
     int intervalo;
 } Configs;
 
+// Estrutura do Arquivo de Configurações
 typedef struct tad_configs {
   FILE *arquivo;
   Configs configs;
