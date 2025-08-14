@@ -48,12 +48,12 @@ public class Circulo {
         double perimetroAzul = meuCirculoAzul.calcularPerimetro();
 
         // Usando String.format para controlar as casas decimais (similar ao f-string)
-        System.out.println(String.format("A área do círculo é: %.2f", areaAzul));
-        System.out.println(String.format("O perímetro do círculo é: %.2f", perimetroAzul));
+        System.out.printf("A área do círculo é: %.2f%n", areaAzul);
+        System.out.printf("O perímetro do círculo é: %.2f%n", perimetroAzul);
 
         System.out.println("\n--- Informações do Círculo Vermelho ---");
         System.out.println("O raio do círculo vermelho é: " + meuCirculoVermelho.getRaio());
         double areaVermelha = meuCirculoVermelho.calcularArea();
-        System.out.println(String.format("A área do círculo vermelho é: %.2f", areaVermelha));
+        System.out.printf("A área do círculo vermelho é: %.2f%n", areaVermelha);
     }
 }
